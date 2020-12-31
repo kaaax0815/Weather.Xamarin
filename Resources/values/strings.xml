@@ -1,0 +1,14 @@
+<resources>
+  <string name="app_name">Weather.Xamarin</string>
+  <string name="navigation_drawer_open">Open navigation drawer</string>
+  <string name="navigation_drawer_close">Close navigation drawer</string>
+  <string name="action_settings">Settings</string>
+  <string name="main_text">Please choose a Option from the Drawer to get Weather Information</string>
+  <string name="logo">Logo</string>
+  <string name="author">Bernd Storath (kaaaxcreators)</string>
+  <string name="website">https:&#47;&#47;kaaaxcreators.de</string>
+  <string name="action_reload">Reload</string>
+  <string name="placeholder">Placeholder</string>
+  <string name="icon">Icon</string>
+  <string name="rain">mm rain last&#160;</string>
+</resources>
