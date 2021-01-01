@@ -232,58 +232,49 @@
         android:orientation="horizontal" >
             <TextView
                 android:text="@string/placeholder"
-                android:textSize="50px"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/forecast1" />
+                android:id="@+id/forecast1"
+                android:textSize="50px"/>
             <TextView
                 android:text="@string/placeholder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/forecast2"
-                android:layout_toRightOf="@id/forecast1"/>
+                android:textSize="50px"/>
             <TextView
                 android:text="@string/placeholder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/forecast3" 
-                android:layout_toRightOf="@id/forecast2"/>
+                android:id="@+id/forecast3"
+                android:textSize="50px"/>
             <TextView
                 android:text="@string/placeholder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/forecast4"
-                android:layout_toRightOf="@id/forecast3"/>
+                android:textSize="50px"/>
             <TextView
                 android:text="@string/placeholder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/forecast5"
-                android:textSize="50px"
-                android:layout_toRightOf="@id/forecast4"/>
+                android:textSize="50px"/>
             <TextView
                 android:text="@string/placeholder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/forecast6"
-                android:layout_toRightOf="@id/forecast5"/>
+                android:textSize="50px"/>
             <TextView
                 android:text="@string/placeholder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/forecast7"
-                android:textSize="50px"
-                android:layout_toRightOf="@id/forecast6"/>
+                android:textSize="50px"/>
         </LinearLayout>
     </HorizontalScrollView>
-    <TextView
-        android:text="@string/placeholder"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:id="@+id/lastupdate_txt" />
+    <!-- Doesnt work with ScrollView
     <Syncfusion.SfPullToRefresh.SfPullToRefresh 
     android:minWidth="25px"
     android:minHeight="25px"
@@ -292,5 +283,5 @@
     android:id="@+id/sfPullToRefresh1"
     custom:transitionType="push"
 	custom:progressStrokeColor="@android:color/black"
-    custom:progressBackgroundColor="#ffffff"/>
+    custom:progressBackgroundColor="#ffffff"/>-->
 </RelativeLayout>

@@ -11,4 +11,5 @@
   <string name="placeholder">Placeholder</string>
   <string name="icon">Icon</string>
   <string name="rain">mm rain last&#160;</string>
+  <string name="snow">mm snow last&#160;</string>
 </resources>

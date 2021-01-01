@@ -1,26 +1,21 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using Newtonsoft.Json;
 using Square.Picasso;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Net;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Xamarin.Essentials;
-using Syncfusion.SfPullToRefresh;
 using Syncfusion.Android.ProgressBar;
-using AlertDialog = Android.App.AlertDialog;
-using System.Net.Http;
+using Syncfusion.SfPullToRefresh;
+using System;
 using System.Collections.Generic;
-using Android.Text;
-using Android.Support.V4.Text;
-using Android.Content;
-using Android.Support.V7.Widget;
+using System.Globalization;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Xamarin.Essentials;
+using AlertDialog = Android.App.AlertDialog;
 
 namespace Weather.Xamarin
 {
@@ -38,8 +33,8 @@ namespace Weather.Xamarin
             SetContentView(Resource.Layout.activity_main);
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-            SfPullToRefresh pullToRefresh = FindViewById<SfPullToRefresh>(Resource.Id.sfPullToRefresh1);
-            pullToRefresh.Refreshing += PullToRefresh_Refreshing;
+            // SfPullToRefresh pullToRefresh = FindViewById<SfPullToRefresh>(Resource.Id.sfPullToRefresh1);
+            // pullToRefresh.Refreshing += PullToRefresh_Refreshing;
             GetWeather();
         }
 
@@ -76,11 +71,13 @@ namespace Weather.Xamarin
         public async void GetWeather()
         {
             RelativeLayout relativeLayout = FindViewById<RelativeLayout>(Resource.Id.relativeLayout1);
-            SfLinearProgressBar sfLinearProgressBar = new SfLinearProgressBar(this);
-            sfLinearProgressBar.LayoutParameters = new RelativeLayout.LayoutParams(
+            SfLinearProgressBar sfLinearProgressBar = new SfLinearProgressBar(this)
+            {
+                LayoutParameters = new RelativeLayout.LayoutParams(
                 this.Resources.DisplayMetrics.WidthPixels,
-                this.Resources.DisplayMetrics.HeightPixels / 18);
-            sfLinearProgressBar.IsIndeterminate = true;
+                this.Resources.DisplayMetrics.HeightPixels / 18),
+                IsIndeterminate = true
+            };
             relativeLayout.AddView(sfLinearProgressBar);
             string lat = "0";
             string lon = "0";
@@ -131,15 +128,16 @@ namespace Weather.Xamarin
             {
                 try
                 {
-                    var values = new Dictionary<string, string>
+                    Dictionary<string, string> values = new Dictionary<string, string>
                     {
-                    { "text", ex.ToString() },
-                    { "private", "1" }
+                        { "text", ex.ToString() },
+                        { "private", "1" },
+                        { "lang", "java" }
                     };
 
-                    var content = new FormUrlEncodedContent(values);
-                    var response_error = await client.PostAsync("https://nopaste.chaoz-irc.net/api/create", content);
-                    var response_error_String = await response_error.Content.ReadAsStringAsync();
+                    FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+                    HttpResponseMessage response_error = await client.PostAsync("https://nopaste.chaoz-irc.net/api/create", content);
+                    string response_error_String = await response_error.Content.ReadAsStringAsync();
                     AlertDialog.Builder alert = new AlertDialog.Builder(this);
                     alert.SetTitle("Error while getting Location");
                     alert.SetCancelable(false);
@@ -155,7 +153,7 @@ namespace Weather.Xamarin
                 }
                 catch (Exception excep)
                 {
-                    Toast.MakeText(ApplicationContext, excep.ToString(), ToastLength.Long).Show();
+                    Toast.MakeText(ApplicationContext, "Error while making Error and uploading Log: " + excep.ToString(), ToastLength.Long).Show();
                     sfLinearProgressBar.Visibility = ViewStates.Gone;
                     return;
                 }
@@ -163,225 +161,236 @@ namespace Weather.Xamarin
             }
             try
             {
-                WebRequest request = HttpWebRequest.Create("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&lang=" + lang + "&appid=" + key + "&mode=xml&units=metric");
-                request.ContentType = "application/xml";
-                request.Method = "GET";
-                using HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-                if (response.StatusCode != HttpStatusCode.OK)
-                    Toast.MakeText(Application.Context, "Error fetching data. Server returned status code: " + response.StatusCode, ToastLength.Short).Show();
-                XmlSerializer serializer = new XmlSerializer(typeof(Current));
-                Current i;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                {
-                    i = (Current)serializer.Deserialize(reader);
-                }
-                FindViewById<TextView>(Resource.Id.city_txt).Text = i.City.Name;
-                DateTime thisDay = DateTime.Today;
-                FindViewById<TextView>(Resource.Id.date_txt).Text = thisDay.ToString("D");
-                string url = "https://openweathermap.org/img/wn/" + i.Weather.Icon + "@4x.png";
-                Picasso.Get().Load(url).Into(FindViewById<ImageView>(Resource.Id.weather_img));
-                FindViewById<TextView>(Resource.Id.temp_txt).Text = i.Temperature.Value + "°C";
-                FindViewById<TextView>(Resource.Id.feelslike_txt).Text = "Feels like: " + i.Feels_like.Value + "°C";
-                FindViewById<TextView>(Resource.Id.sunrise_txt).Text = DateTime.Parse(i.City.Sun.Rise, null, DateTimeStyles.AssumeUniversal).ToString("g");
-                FindViewById<TextView>(Resource.Id.sunset_txt).Text = DateTime.Parse(i.City.Sun.Set, null, DateTimeStyles.AssumeUniversal).ToString("g");
-                FindViewById<TextView>(Resource.Id.humidity_txt).Text = i.Humidity.Value + i.Humidity.Unit;
-                FindViewById<TextView>(Resource.Id.pressure_txt).Text = i.Pressure.Value + i.Pressure.Unit;
-                FindViewById<TextView>(Resource.Id.speed_txt).Text = i.Wind.Speed.Value + i.Wind.Speed.Unit;
-                FindViewById<TextView>(Resource.Id.direction_txt).Text = i.Wind.Direction.Value + " " + i.Wind.Direction.Code;
-                FindViewById<TextView>(Resource.Id.lastupdate_txt).Text = "Last Updated: " + DateTime.Parse(i.Lastupdate.Value, null, DateTimeStyles.AssumeUniversal).ToString("g");
-                if (i.Precipitation.Mode != "no")
-                {
-                    FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
-                    FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.Precipitation.Value.AsSpan(0, 4).ToString() + Resources.GetString(Resource.String.rain) + i.Precipitation.Unit;
+                Task task = client.GetAsync("https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&appid=" + key + "&lang" + lang + "&unit=metric")
+                  .ContinueWith((taskwithresponse) =>
+                  {
+                      HttpResponseMessage response = taskwithresponse.Result;
+                      Task<string> jsonString = response.Content.ReadAsStringAsync();
+                      if (!jsonString.IsFaulted)
+                      {
+                          jsonString.Wait();
+                          Root i;
+                          i = JsonConvert.DeserializeObject<Root>(jsonString.Result);
+                          FindViewById<TextView>(Resource.Id.city_txt).Text = i.lat + " " + i.lon;
+                          DateTime thisDay = DateTime.Today;
+                          FindViewById<TextView>(Resource.Id.date_txt).Text = thisDay.ToString("D");
+                          string url = "https://openweathermap.org/img/wn/" + i.current.weather[0].icon + "@4x.png";
+                          Picasso.Get().Load(url).Into(FindViewById<ImageView>(Resource.Id.weather_img));
+                          FindViewById<TextView>(Resource.Id.temp_txt).Text = i.current.temp + "°C";
+                          FindViewById<TextView>(Resource.Id.feelslike_txt).Text = "Feels like: " + i.current.feels_like + "°C";
+                          FindViewById<TextView>(Resource.Id.sunrise_txt).Text = DateTime.Parse(i.current.sunrise.ToString(), null, DateTimeStyles.AssumeUniversal).ToString("g");
+                          FindViewById<TextView>(Resource.Id.sunset_txt).Text = DateTime.Parse(i.current.sunrise.ToString(), null, DateTimeStyles.AssumeUniversal).ToString("g");
+                          FindViewById<TextView>(Resource.Id.humidity_txt).Text = i.current.humidity + "%";
+                          FindViewById<TextView>(Resource.Id.pressure_txt).Text = i.current.pressure + "hPa";
+                          FindViewById<TextView>(Resource.Id.speed_txt).Text = i.current.wind_speed + "m/s";
+                          FindViewById<TextView>(Resource.Id.direction_txt).Text = i.current.wind_deg + "°";
+                          if (i.current.rain._1h.GetValueOrDefault() != 0)
+                          {
+                              FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
+                              FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.rain._1h + Resources.GetString(Resource.String.rain) + "1h";
 
-                }
-                sfLinearProgressBar.Visibility = ViewStates.Gone;
+                          }
+                          else if (i.current.rain._3h.GetValueOrDefault() != 0)
+                          {
+                              FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
+                              FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.rain._3h + Resources.GetString(Resource.String.rain) + "3h";
+
+                          }
+                          else if (i.current.snow._1h.GetValueOrDefault() != 0)
+                          {
+                              FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
+                              FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.snow._1h + Resources.GetString(Resource.String.snow) + "1h";
+
+                          }
+                          else if (i.current.snow._3h.GetValueOrDefault() != 0)
+                          {
+                              FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
+                              FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.snow._3h + Resources.GetString(Resource.String.snow) + "3h";
+
+                          }
+                          sfLinearProgressBar.Visibility = ViewStates.Gone;
+                      }
+                  });
+                task.Wait();
             }
             catch (Exception except)
             {
-                Toast.MakeText(ApplicationContext, except.ToString(), ToastLength.Long).Show();
                 sfLinearProgressBar.Visibility = ViewStates.Gone;
+                try
+                {
+                    Dictionary<string, string> values = new Dictionary<string, string>
+                    {
+                        { "text", except.ToString() },
+                        { "private", "1" },
+                        { "lang", "java" }
+                    };
+
+                    FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+                    HttpResponseMessage response_error = await client.PostAsync("https://nopaste.chaoz-irc.net/api/create", content);
+                    string response_error_String = await response_error.Content.ReadAsStringAsync();
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.SetTitle("Error while making Request and setting Values");
+                    alert.SetCancelable(false);
+                    alert.SetMessage("Error while making Request and setting Values. Please share this url with Developers: \n" + response_error_String);
+                    alert.SetIcon(Resource.Drawable.main_warning);
+                    alert.SetNeutralButton("OK", (senderAlert, args) =>
+                    {
+                        sfLinearProgressBar.Visibility = ViewStates.Gone;
+                        return;
+                    });
+                    Dialog dialog = alert.Create();
+                    dialog.Show();
+                }
+                catch (Exception excep)
+                {
+                    Toast.MakeText(ApplicationContext, "Error while making Error and uploading Log: " + excep.ToString(), ToastLength.Long).Show();
+                    sfLinearProgressBar.Visibility = ViewStates.Gone;
+                    return;
+                }
                 return;
             }
         }
     }
-    [XmlRoot(ElementName = "coord")]
-    public class Coord
-    {
-        [XmlAttribute(AttributeName = "lon")]
-        public string Lon { get; set; }
-        [XmlAttribute(AttributeName = "lat")]
-        public string Lat { get; set; }
-    }
 
-    [XmlRoot(ElementName = "sun")]
-    public class Sun
-    {
-        [XmlAttribute(AttributeName = "rise")]
-        public string Rise { get; set; }
-        [XmlAttribute(AttributeName = "set")]
-        public string Set { get; set; }
-    }
-
-    [XmlRoot(ElementName = "city")]
-    public class City
-    {
-        [XmlElement(ElementName = "coord")]
-        public Coord Coord { get; set; }
-        [XmlElement(ElementName = "country")]
-        public string Country { get; set; }
-        [XmlElement(ElementName = "timezone")]
-        public string Timezone { get; set; }
-        [XmlElement(ElementName = "sun")]
-        public Sun Sun { get; set; }
-        [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-    }
-
-    [XmlRoot(ElementName = "temperature")]
-    public class Temperature
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-        [XmlAttribute(AttributeName = "min")]
-        public string Min { get; set; }
-        [XmlAttribute(AttributeName = "max")]
-        public string Max { get; set; }
-        [XmlAttribute(AttributeName = "unit")]
-        public string Unit { get; set; }
-    }
-
-    [XmlRoot(ElementName = "feels_like")]
-    public class Feels_like
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-        [XmlAttribute(AttributeName = "unit")]
-        public string Unit { get; set; }
-    }
-
-    [XmlRoot(ElementName = "humidity")]
-    public class Humidity
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-        [XmlAttribute(AttributeName = "unit")]
-        public string Unit { get; set; }
-    }
-
-    [XmlRoot(ElementName = "pressure")]
-    public class Pressure
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-        [XmlAttribute(AttributeName = "unit")]
-        public string Unit { get; set; }
-    }
-
-    [XmlRoot(ElementName = "speed")]
-    public class Speed
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-        [XmlAttribute(AttributeName = "unit")]
-        public string Unit { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-    }
-
-    [XmlRoot(ElementName = "direction")]
-    public class Direction
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-        [XmlAttribute(AttributeName = "code")]
-        public string Code { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-    }
-
-    [XmlRoot(ElementName = "wind")]
-    public class Wind
-    {
-        [XmlElement(ElementName = "speed")]
-        public Speed Speed { get; set; }
-        [XmlElement(ElementName = "gusts")]
-        public string Gusts { get; set; }
-        [XmlElement(ElementName = "direction")]
-        public Direction Direction { get; set; }
-    }
-
-    [XmlRoot(ElementName = "clouds")]
-    public class Clouds
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-    }
-
-    [XmlRoot(ElementName = "visibility")]
-    public class Visibility
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-    }
-
-    [XmlRoot(ElementName = "precipitation")]
-    public class Precipitation
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-        [XmlAttribute(AttributeName = "mode")]
-        public string Mode { get; set; }
-        [XmlAttribute(AttributeName = "unit")]
-        public string Unit { get; set; }
-    }
-
-    [XmlRoot(ElementName = "weather")]
     public class Weather
     {
-        [XmlAttribute(AttributeName = "number")]
-        public string Number { get; set; }
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-        [XmlAttribute(AttributeName = "icon")]
-        public string Icon { get; set; }
+        public int id { get; set; }
+        public string main { get; set; }
+        public string description { get; set; }
+        public string icon { get; set; }
     }
 
-    [XmlRoot(ElementName = "lastupdate")]
-    public class Lastupdate
-    {
-        [XmlAttribute(AttributeName = "value")]
-        public string Value { get; set; }
-    }
-
-    [XmlRoot(ElementName = "current")]
     public class Current
     {
-        [XmlElement(ElementName = "city")]
-        public City City { get; set; }
-        [XmlElement(ElementName = "temperature")]
-        public Temperature Temperature { get; set; }
-        [XmlElement(ElementName = "feels_like")]
-        public Feels_like Feels_like { get; set; }
-        [XmlElement(ElementName = "humidity")]
-        public Humidity Humidity { get; set; }
-        [XmlElement(ElementName = "pressure")]
-        public Pressure Pressure { get; set; }
-        [XmlElement(ElementName = "wind")]
-        public Wind Wind { get; set; }
-        [XmlElement(ElementName = "clouds")]
-        public Clouds Clouds { get; set; }
-        [XmlElement(ElementName = "visibility")]
-        public Visibility Visibility { get; set; }
-        [XmlElement(ElementName = "precipitation")]
-        public Precipitation Precipitation { get; set; }
-        [XmlElement(ElementName = "weather")]
-        public Weather Weather { get; set; }
-        [XmlElement(ElementName = "lastupdate")]
-        public Lastupdate Lastupdate { get; set; }
+        public int dt { get; set; }
+        public int sunrise { get; set; }
+        public int sunset { get; set; }
+        public double temp { get; set; }
+        public double feels_like { get; set; }
+        public int pressure { get; set; }
+        public int humidity { get; set; }
+        public double dew_point { get; set; }
+        public int uvi { get; set; }
+        public int clouds { get; set; }
+        public int visibility { get; set; }
+        public double wind_speed { get; set; }
+        public int wind_deg { get; set; }
+        public double wind_gust { get; set; }
+        public List<Weather> weather { get; set; }
+        public Rain rain { get; set; }
+        public Snow snow { get; set; }
     }
+
+    public class Rain
+    {
+        public double? _1h { get; set; }
+        public double? _3h { get; set; }
+    }
+    public class Snow
+    {
+        public double? _1h { get; set; }
+        public double? _3h { get; set; }
+    }
+
+    public class Minutely
+    {
+        public int dt { get; set; }
+        public int precipitation { get; set; }
+    }
+
+    public class Weather2
+    {
+        public int id { get; set; }
+        public string main { get; set; }
+        public string description { get; set; }
+        public string icon { get; set; }
+    }
+
+    public class Hourly
+    {
+        public int dt { get; set; }
+        public double temp { get; set; }
+        public double feels_like { get; set; }
+        public int pressure { get; set; }
+        public int humidity { get; set; }
+        public double dew_point { get; set; }
+        public double uvi { get; set; }
+        public int clouds { get; set; }
+        public int visibility { get; set; }
+        public double wind_speed { get; set; }
+        public int wind_deg { get; set; }
+        public List<Weather2> weather { get; set; }
+        public double pop { get; set; }
+        public Snow snow { get; set; }
+    }
+
+    public class Temp
+    {
+        public double day { get; set; }
+        public double min { get; set; }
+        public double max { get; set; }
+        public double night { get; set; }
+        public double eve { get; set; }
+        public double morn { get; set; }
+    }
+
+    public class FeelsLike
+    {
+        public double day { get; set; }
+        public double night { get; set; }
+        public double eve { get; set; }
+        public double morn { get; set; }
+    }
+
+    public class Weather3
+    {
+        public int id { get; set; }
+        public string main { get; set; }
+        public string description { get; set; }
+        public string icon { get; set; }
+    }
+
+    public class Daily
+    {
+        public int dt { get; set; }
+        public int sunrise { get; set; }
+        public int sunset { get; set; }
+        public Temp temp { get; set; }
+        public FeelsLike feels_like { get; set; }
+        public int pressure { get; set; }
+        public int humidity { get; set; }
+        public double dew_point { get; set; }
+        public double wind_speed { get; set; }
+        public int wind_deg { get; set; }
+        public List<Weather3> weather { get; set; }
+        public int clouds { get; set; }
+        public double pop { get; set; }
+        public double rain { get; set; }
+        public double snow { get; set; }
+        public double uvi { get; set; }
+    }
+
+    public class Alert
+    {
+        public string sender_name { get; set; }
+        public string @event { get; set; }
+        public int start { get; set; }
+        public int end { get; set; }
+        public string description { get; set; }
+    }
+
+    public class Root
+    {
+        public double lat { get; set; }
+        public double lon { get; set; }
+        public string timezone { get; set; }
+        public int timezone_offset { get; set; }
+        public Current current { get; set; }
+        public List<Minutely> minutely { get; set; }
+        public List<Hourly> hourly { get; set; }
+        public List<Daily> daily { get; set; }
+        public List<Alert> alerts { get; set; }
+    }
+
+
 }
