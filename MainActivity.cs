@@ -14,6 +14,13 @@ using System.Xml.Serialization;
 using Xamarin.Essentials;
 using Syncfusion.SfPullToRefresh;
 using Syncfusion.Android.ProgressBar;
+using AlertDialog = Android.App.AlertDialog;
+using System.Net.Http;
+using System.Collections.Generic;
+using Android.Text;
+using Android.Support.V4.Text;
+using Android.Content;
+using Android.Support.V7.Widget;
 
 namespace Weather.Xamarin
 {
@@ -22,6 +29,7 @@ namespace Weather.Xamarin
     {
         readonly string key = "89f453dd00317568c5655dddece7f2a7";
         readonly string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+        private static readonly HttpClient client = new HttpClient();
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -89,46 +97,112 @@ namespace Weather.Xamarin
                 }
                 else
                 {
-                    throw new Exception ("Location is zero");
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.SetTitle("Error while getting Location");
+                    alert.SetMessage("There was an error getting your Location. Please retry");
+                    alert.SetIcon(Resource.Drawable.main_warning);
+                    alert.SetNeutralButton("OK", (senderAlert, args) =>
+                    {
+                        sfLinearProgressBar.Visibility = ViewStates.Gone;
+                        return;
+                    });
+                    Dialog dialog = alert.Create();
+                    dialog.Show();
                 }
+            }
+            catch (FeatureNotEnabledException)
+            {
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.SetTitle("Error while getting Location");
+                alert.SetCancelable(false);
+                alert.SetMessage("There was an error getting your Location. Please enable Location Services!");
+                alert.SetIcon(Resource.Drawable.main_warning);
+                alert.SetNeutralButton("OK", (senderAlert, args) =>
+                {
+                    sfLinearProgressBar.Visibility = ViewStates.Gone;
+                    StartActivity(new Intent(Android.Provider.Settings.ActionLocationSourceSettings));
+                    return;
+                });
+                Dialog dialog = alert.Create();
+                dialog.Show();
+                return;
             }
             catch (Exception ex)
             {
-                Toast.MakeText(Application.Context, ex.ToString(), ToastLength.Long);
-            }
-            WebRequest request = HttpWebRequest.Create("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&lang=" + lang + "&appid=" + key + "&mode=xml&units=metric");
-            request.ContentType = "application/xml";
-            request.Method = "GET";
-            using HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            if (response.StatusCode != HttpStatusCode.OK)
-                Toast.MakeText(Application.Context, "Error fetching data. Server returned status code: " + response.StatusCode, ToastLength.Short).Show();
-            XmlSerializer serializer = new XmlSerializer(typeof(Current));
-            Current i;
-            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-            {
-                i = (Current)serializer.Deserialize(reader);
-            }
-            FindViewById<TextView>(Resource.Id.city_txt).Text = i.City.Name;
-            DateTime thisDay = DateTime.Today;
-            FindViewById<TextView>(Resource.Id.date_txt).Text = thisDay.ToString("D");
-            string url = "https://openweathermap.org/img/wn/" + i.Weather.Icon + "@4x.png";
-            Picasso.Get().Load(url).Into(FindViewById<ImageView>(Resource.Id.weather_img));
-            FindViewById<TextView>(Resource.Id.temp_txt).Text = i.Temperature.Value + "°C";
-            FindViewById<TextView>(Resource.Id.feelslike_txt).Text = "Feels like: " + i.Feels_like.Value + "°C";
-            FindViewById<TextView>(Resource.Id.sunrise_txt).Text = DateTime.Parse(i.City.Sun.Rise, null, DateTimeStyles.AssumeUniversal).ToString("g");
-            FindViewById<TextView>(Resource.Id.sunset_txt).Text = DateTime.Parse(i.City.Sun.Set, null, DateTimeStyles.AssumeUniversal).ToString("g");
-            FindViewById<TextView>(Resource.Id.humidity_txt).Text = i.Humidity.Value + i.Humidity.Unit;
-            FindViewById<TextView>(Resource.Id.pressure_txt).Text = i.Pressure.Value + i.Pressure.Unit;
-            FindViewById<TextView>(Resource.Id.speed_txt).Text = i.Wind.Speed.Value + i.Wind.Speed.Unit;
-            FindViewById<TextView>(Resource.Id.direction_txt).Text = i.Wind.Direction.Value + " " + i.Wind.Direction.Code;
-            FindViewById<TextView>(Resource.Id.lastupdate_txt).Text = "Last Updated: " + DateTime.Parse(i.Lastupdate.Value, null, DateTimeStyles.AssumeUniversal).ToString("g");
-            if (i.Precipitation.Mode != "no")
-            {
-                FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
-                FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.Precipitation.Value.AsSpan(0, 4).ToString() + Resources.GetString(Resource.String.rain) + i.Precipitation.Unit;
+                try
+                {
+                    var values = new Dictionary<string, string>
+                    {
+                    { "text", ex.ToString() },
+                    { "private", "1" }
+                    };
 
+                    var content = new FormUrlEncodedContent(values);
+                    var response_error = await client.PostAsync("https://nopaste.chaoz-irc.net/api/create", content);
+                    var response_error_String = await response_error.Content.ReadAsStringAsync();
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.SetTitle("Error while getting Location");
+                    alert.SetCancelable(false);
+                    alert.SetMessage("There was an error getting your Location. Please share this url with Developers: \n" + response_error_String);
+                    alert.SetIcon(Resource.Drawable.main_warning);
+                    alert.SetNeutralButton("OK", (senderAlert, args) =>
+                    {
+                        sfLinearProgressBar.Visibility = ViewStates.Gone;
+                        return;
+                    });
+                    Dialog dialog = alert.Create();
+                    dialog.Show();
+                }
+                catch (Exception excep)
+                {
+                    Toast.MakeText(ApplicationContext, excep.ToString(), ToastLength.Long).Show();
+                    sfLinearProgressBar.Visibility = ViewStates.Gone;
+                    return;
+                }
+                return;
             }
-            sfLinearProgressBar.Visibility = ViewStates.Gone;
+            try
+            {
+                WebRequest request = HttpWebRequest.Create("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&lang=" + lang + "&appid=" + key + "&mode=xml&units=metric");
+                request.ContentType = "application/xml";
+                request.Method = "GET";
+                using HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                if (response.StatusCode != HttpStatusCode.OK)
+                    Toast.MakeText(Application.Context, "Error fetching data. Server returned status code: " + response.StatusCode, ToastLength.Short).Show();
+                XmlSerializer serializer = new XmlSerializer(typeof(Current));
+                Current i;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    i = (Current)serializer.Deserialize(reader);
+                }
+                FindViewById<TextView>(Resource.Id.city_txt).Text = i.City.Name;
+                DateTime thisDay = DateTime.Today;
+                FindViewById<TextView>(Resource.Id.date_txt).Text = thisDay.ToString("D");
+                string url = "https://openweathermap.org/img/wn/" + i.Weather.Icon + "@4x.png";
+                Picasso.Get().Load(url).Into(FindViewById<ImageView>(Resource.Id.weather_img));
+                FindViewById<TextView>(Resource.Id.temp_txt).Text = i.Temperature.Value + "°C";
+                FindViewById<TextView>(Resource.Id.feelslike_txt).Text = "Feels like: " + i.Feels_like.Value + "°C";
+                FindViewById<TextView>(Resource.Id.sunrise_txt).Text = DateTime.Parse(i.City.Sun.Rise, null, DateTimeStyles.AssumeUniversal).ToString("g");
+                FindViewById<TextView>(Resource.Id.sunset_txt).Text = DateTime.Parse(i.City.Sun.Set, null, DateTimeStyles.AssumeUniversal).ToString("g");
+                FindViewById<TextView>(Resource.Id.humidity_txt).Text = i.Humidity.Value + i.Humidity.Unit;
+                FindViewById<TextView>(Resource.Id.pressure_txt).Text = i.Pressure.Value + i.Pressure.Unit;
+                FindViewById<TextView>(Resource.Id.speed_txt).Text = i.Wind.Speed.Value + i.Wind.Speed.Unit;
+                FindViewById<TextView>(Resource.Id.direction_txt).Text = i.Wind.Direction.Value + " " + i.Wind.Direction.Code;
+                FindViewById<TextView>(Resource.Id.lastupdate_txt).Text = "Last Updated: " + DateTime.Parse(i.Lastupdate.Value, null, DateTimeStyles.AssumeUniversal).ToString("g");
+                if (i.Precipitation.Mode != "no")
+                {
+                    FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
+                    FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.Precipitation.Value.AsSpan(0, 4).ToString() + Resources.GetString(Resource.String.rain) + i.Precipitation.Unit;
+
+                }
+                sfLinearProgressBar.Visibility = ViewStates.Gone;
+            }
+            catch (Exception except)
+            {
+                Toast.MakeText(ApplicationContext, except.ToString(), ToastLength.Long).Show();
+                sfLinearProgressBar.Visibility = ViewStates.Gone;
+                return;
+            }
         }
     }
     [XmlRoot(ElementName = "coord")]

@@ -9,10 +9,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:minWidth="25px"
+    android:focusable="true"
     android:minHeight="25px"
-    android:clickable="false"
-    android:focusable="false"
-    android:focusableInTouchMode="false"
     android:orientation="vertical"
     android:id="@+id/relativeLayout1">
     <TextView
@@ -59,6 +57,9 @@
             <TextView
                 android:text="@string/placeholder"
                 android:layout_width="wrap_content"
+                android:textIsSelectable="true"
+                android:longClickable="true"
+                android:selectAllOnFocus="true"
                 android:layout_height="wrap_content"
                 android:id="@+id/temp_txt"
                 android:layout_centerVertical="true"
@@ -71,7 +72,7 @@
                 android:id="@+id/feelslike_txt"
                 android:layout_below="@id/temp_txt"
                 android:textSize="40px" />
-            </RelativeLayout>
+        </RelativeLayout>
         <RelativeLayout
             android:minWidth="25px"
             android:minHeight="25px"
@@ -117,8 +118,7 @@
             android:drawableLeft="@drawable/layer"
             android:text="@string/placeholder"
             android:id="@+id/rain_txt" />
-
-        </RelativeLayout>
+    </RelativeLayout>
     <RelativeLayout
         android:layout_marginTop="30px"
         android:minWidth="25px"
@@ -191,7 +191,7 @@
             android:text="@string/placeholder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-             android:layout_below="@id/speed_img"
+                android:layout_below="@id/speed_img"
             android:id="@+id/speed_txt" />
         </RelativeLayout>
         <RelativeLayout
@@ -217,6 +217,65 @@
             android:id="@+id/direction_txt" />
         </RelativeLayout>
     </RelativeLayout>
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:focusable="true"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollview_forcecast"
+        android:scrollbars="horizontal"
+        android:scrollbarAlwaysDrawHorizontalTrack="false"
+        android:layout_below="@id/info_layout">
+        <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ol123"
+        android:orientation="horizontal" >
+            <TextView
+                android:text="@string/placeholder"
+                android:textSize="50px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/forecast1" />
+            <TextView
+                android:text="@string/placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/forecast2"
+                android:layout_toRightOf="@id/forecast1"/>
+            <TextView
+                android:text="@string/placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/forecast3" 
+                android:layout_toRightOf="@id/forecast2"/>
+            <TextView
+                android:text="@string/placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/forecast4"
+                android:layout_toRightOf="@id/forecast3"/>
+            <TextView
+                android:text="@string/placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/forecast5"
+                android:textSize="50px"
+                android:layout_toRightOf="@id/forecast4"/>
+            <TextView
+                android:text="@string/placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/forecast6"
+                android:layout_toRightOf="@id/forecast5"/>
+            <TextView
+                android:text="@string/placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/forecast7"
+                android:textSize="50px"
+                android:layout_toRightOf="@id/forecast6"/>
+        </LinearLayout>
+    </HorizontalScrollView>
     <TextView
         android:text="@string/placeholder"
         android:textAppearance="?android:attr/textAppearanceSmall"
