@@ -6,16 +6,21 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
+using Plugin.Geolocator;
 using Square.Picasso;
 using Syncfusion.Android.ProgressBar;
 using Syncfusion.SfPullToRefresh;
+using Com.Syncfusion.Charts;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using AlertDialog = Android.App.AlertDialog;
+using System.Collections.ObjectModel;
 
 namespace Weather.Xamarin
 {
@@ -51,6 +56,11 @@ namespace Weather.Xamarin
             {
                 return true;
             }
+            if (id == Resource.Id.action_refresh)
+            {
+                GetWeather();
+                return true;
+            }
 
             return base.OnOptionsItemSelected(item);
         }
@@ -70,6 +80,7 @@ namespace Weather.Xamarin
         }
         public async void GetWeather()
         {
+            // Progress Bar
             RelativeLayout relativeLayout = FindViewById<RelativeLayout>(Resource.Id.relativeLayout1);
             SfLinearProgressBar sfLinearProgressBar = new SfLinearProgressBar(this)
             {
@@ -79,12 +90,15 @@ namespace Weather.Xamarin
                 IsIndeterminate = true
             };
             relativeLayout.AddView(sfLinearProgressBar);
-            string lat = "0";
-            string lon = "0";
+            string lat;
+            string lon;
             try
             {
-                GeolocationRequest locrequest = new GeolocationRequest(GeolocationAccuracy.Best);
-                Location loc = await Geolocation.GetLocationAsync(locrequest);
+                // Get Current Location
+                var locator = CrossGeolocator.Current;
+                locator.DesiredAccuracy = 50;
+                var loc = await locator.GetPositionAsync();
+
 
                 if (loc != null)
                 {
@@ -105,6 +119,7 @@ namespace Weather.Xamarin
                     });
                     Dialog dialog = alert.Create();
                     dialog.Show();
+                    lat = "0"; lon = "0";
                 }
             }
             catch (FeatureNotEnabledException)
@@ -134,9 +149,9 @@ namespace Weather.Xamarin
                         { "private", "1" },
                         { "lang", "java" }
                     };
-
-                    FormUrlEncodedContent content = new FormUrlEncodedContent(values);
-                    HttpResponseMessage response_error = await client.PostAsync("https://nopaste.chaoz-irc.net/api/create", content);
+                    // Send Error to Nopaste
+                    FormUrlEncodedContent errorlog = new FormUrlEncodedContent(values);
+                    HttpResponseMessage response_error = await client.PostAsync("https://nopaste.chaoz-irc.net/api/create", errorlog);
                     string response_error_String = await response_error.Content.ReadAsStringAsync();
                     AlertDialog.Builder alert = new AlertDialog.Builder(this);
                     alert.SetTitle("Error while getting Location");
@@ -161,57 +176,131 @@ namespace Weather.Xamarin
             }
             try
             {
-                Task task = client.GetAsync("https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&appid=" + key + "&lang" + lang + "&unit=metric")
-                  .ContinueWith((taskwithresponse) =>
-                  {
-                      HttpResponseMessage response = taskwithresponse.Result;
-                      Task<string> jsonString = response.Content.ReadAsStringAsync();
-                      if (!jsonString.IsFaulted)
-                      {
-                          jsonString.Wait();
-                          Root i;
-                          i = JsonConvert.DeserializeObject<Root>(jsonString.Result);
-                          FindViewById<TextView>(Resource.Id.city_txt).Text = i.lat + " " + i.lon;
-                          DateTime thisDay = DateTime.Today;
-                          FindViewById<TextView>(Resource.Id.date_txt).Text = thisDay.ToString("D");
-                          string url = "https://openweathermap.org/img/wn/" + i.current.weather[0].icon + "@4x.png";
-                          Picasso.Get().Load(url).Into(FindViewById<ImageView>(Resource.Id.weather_img));
-                          FindViewById<TextView>(Resource.Id.temp_txt).Text = i.current.temp + "°C";
-                          FindViewById<TextView>(Resource.Id.feelslike_txt).Text = "Feels like: " + i.current.feels_like + "°C";
-                          FindViewById<TextView>(Resource.Id.sunrise_txt).Text = DateTime.Parse(i.current.sunrise.ToString(), null, DateTimeStyles.AssumeUniversal).ToString("g");
-                          FindViewById<TextView>(Resource.Id.sunset_txt).Text = DateTime.Parse(i.current.sunrise.ToString(), null, DateTimeStyles.AssumeUniversal).ToString("g");
-                          FindViewById<TextView>(Resource.Id.humidity_txt).Text = i.current.humidity + "%";
-                          FindViewById<TextView>(Resource.Id.pressure_txt).Text = i.current.pressure + "hPa";
-                          FindViewById<TextView>(Resource.Id.speed_txt).Text = i.current.wind_speed + "m/s";
-                          FindViewById<TextView>(Resource.Id.direction_txt).Text = i.current.wind_deg + "°";
-                          if (i.current.rain._1h.GetValueOrDefault() != 0)
-                          {
-                              FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
-                              FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.rain._1h + Resources.GetString(Resource.String.rain) + "1h";
+                // Reverse Geocoding
+                WebRequest iqrequest = HttpWebRequest.Create("https://api.openweathermap.org/geo/1.0/reverse?appid=" + key + "&lat=" + lat + "&lon=" + lon);
+                iqrequest.ContentType = "application/json";
+                iqrequest.Method = "GET";
+                using HttpWebResponse iqresponse = iqrequest.GetResponse() as HttpWebResponse;
+                if (iqresponse.StatusCode != HttpStatusCode.OK)
+                    Toast.MakeText(Application.Context, "Error fetching data. Server returned status code: " + iqresponse.StatusCode, ToastLength.Short).Show();
+                using StreamReader iqreader = new StreamReader(iqresponse.GetResponseStream());
+                var iqcontent = iqreader.ReadToEnd();
+                var loc = JsonConvert.DeserializeObject<List<ReverseGeocoding>>(iqcontent);
+                // Weather Data
+                WebRequest request = HttpWebRequest.Create("https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&lang=" + lang + "&appid=" + key + "&units=metric");
+                request.ContentType = "application/json";
+                request.Method = "GET";
+                using HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                if (response.StatusCode != HttpStatusCode.OK)
+                    Toast.MakeText(Application.Context, "Error fetching data. Server returned status code: " + response.StatusCode, ToastLength.Short).Show();
+                using StreamReader reader = new StreamReader(response.GetResponseStream());
+                var content = reader.ReadToEnd();
+                var i = JsonConvert.DeserializeObject<OneClickApi>(content);
+                // Current Weather
+                FindViewById<TextView>(Resource.Id.city_txt).Text = loc[0].LocalNames.De;
+                DateTime thisDay = DateTime.Today;
+                FindViewById<TextView>(Resource.Id.date_txt).Text = thisDay.ToString("D");
+                string url = "https://openweathermap.org/img/wn/" + i.current.weather[0].icon + "@4x.png";
+                Picasso.Get().Load(url).Into(FindViewById<ImageView>(Resource.Id.weather_img));
+                FindViewById<TextView>(Resource.Id.temp_txt).Text = i.current.temp + "°C";
+                FindViewById<TextView>(Resource.Id.feelslike_txt).Text = "Feels like: " + i.current.feels_like + "°C";
+                DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                FindViewById<TextView>(Resource.Id.sunrise_txt).Text = dtDateTime.AddSeconds(i.current.sunrise).ToLocalTime().ToString("g");
+                FindViewById<TextView>(Resource.Id.sunset_txt).Text = dtDateTime.AddSeconds(i.current.sunset).ToLocalTime().ToString("g");
+                FindViewById<TextView>(Resource.Id.humidity_txt).Text = i.current.humidity + "%";
+                FindViewById<TextView>(Resource.Id.pressure_txt).Text = i.current.pressure + "hPa";
+                FindViewById<TextView>(Resource.Id.speed_txt).Text = i.current.wind_speed + "m/s";
+                FindViewById<TextView>(Resource.Id.direction_txt).Text = i.current.wind_deg + "°";
+                if (i.current.rain != null && i.current.rain._1h.GetValueOrDefault() != 0)
+                {
+                    FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
+                    FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.rain._1h + Resources.GetString(Resource.String.rain) + "1h";
 
-                          }
-                          else if (i.current.rain._3h.GetValueOrDefault() != 0)
-                          {
-                              FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
-                              FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.rain._3h + Resources.GetString(Resource.String.rain) + "3h";
+                }
+                else if (i.current.rain != null && i.current.rain._3h.GetValueOrDefault() != 0)
+                {
+                    FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
+                    FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.rain._3h + Resources.GetString(Resource.String.rain) + "3h";
 
-                          }
-                          else if (i.current.snow._1h.GetValueOrDefault() != 0)
-                          {
-                              FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
-                              FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.snow._1h + Resources.GetString(Resource.String.snow) + "1h";
+                }
+                else if (i.current.snow != null && i.current.snow._1h.GetValueOrDefault() != 0)
+                {
+                    FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
+                    FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.snow._1h + Resources.GetString(Resource.String.snow) + "1h";
 
-                          }
-                          else if (i.current.snow._3h.GetValueOrDefault() != 0)
-                          {
-                              FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
-                              FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.snow._3h + Resources.GetString(Resource.String.snow) + "3h";
+                }
+                else if (i.current.snow != null && i.current.snow._3h.GetValueOrDefault() != 0)
+                {
+                    FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
+                    FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.snow._3h + Resources.GetString(Resource.String.snow) + "3h";
 
-                          }
-                          sfLinearProgressBar.Visibility = ViewStates.Gone;
-                      }
-                  });
-                task.Wait();
+                }
+                // Forecast
+                FindViewById<TextView>(Resource.Id.forecast1_date).Text = dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d");
+                string forecast1_url = "https://openweathermap.org/img/wn/" + i.daily[1].weather[0].icon + "@4x.png";
+                Picasso.Get().Load(url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast1_img));
+                FindViewById<TextView>(Resource.Id.forecast1_max).Text = "Max: " + i.daily[1].temp.max.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast1_min).Text = "Min: " + i.daily[1].temp.min.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast1_pop).Text = i.daily[1].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast2_date).Text = dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d");
+                string forecast2_url = "https://openweathermap.org/img/wn/" + i.daily[2].weather[0].icon + "@4x.png";
+                Picasso.Get().Load(url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast2_img));
+                FindViewById<TextView>(Resource.Id.forecast2_max).Text = "Max: " + i.daily[2].temp.max.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast2_min).Text = "Min: " + i.daily[2].temp.min.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast2_pop).Text = i.daily[2].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast3_date).Text = dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d");
+                string forecast3_url = "https://openweathermap.org/img/wn/" + i.daily[3].weather[0].icon + "@4x.png";
+                Picasso.Get().Load(url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast3_img));
+                FindViewById<TextView>(Resource.Id.forecast3_max).Text = "Max: " + i.daily[3].temp.max.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast3_min).Text = "Min: " + i.daily[3].temp.min.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast3_pop).Text = i.daily[3].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast4_date).Text = dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d");
+                string forecast4_url = "https://openweathermap.org/img/wn/" + i.daily[4].weather[0].icon + "@4x.png";
+                Picasso.Get().Load(url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast4_img));
+                FindViewById<TextView>(Resource.Id.forecast4_max).Text = "Max: " + i.daily[4].temp.max.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast4_min).Text = "Min: " + i.daily[4].temp.min.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast4_pop).Text = i.daily[4].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast5_date).Text = dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d");
+                string forecast5_url = "https://openweathermap.org/img/wn/" + i.daily[5].weather[0].icon + "@4x.png";
+                Picasso.Get().Load(url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast5_img));
+                FindViewById<TextView>(Resource.Id.forecast5_max).Text = "Max: " + i.daily[5].temp.max.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast5_min).Text = "Min: " + i.daily[5].temp.min.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast5_pop).Text = i.daily[5].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast6_date).Text = dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d");
+                string forecast6_url = "https://openweathermap.org/img/wn/" + i.daily[6].weather[0].icon + "@4x.png";
+                Picasso.Get().Load(url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast6_img));
+                FindViewById<TextView>(Resource.Id.forecast6_max).Text = "Max: " + i.daily[6].temp.max.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast6_min).Text = "Min: " + i.daily[6].temp.min.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast6_pop).Text = i.daily[6].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast7_date).Text = dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d");
+                string forecast7_url = "https://openweathermap.org/img/wn/" + i.daily[7].weather[0].icon + "@4x.png";
+                Picasso.Get().Load(url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast7_img));
+                FindViewById<TextView>(Resource.Id.forecast7_max).Text = "Max: " + i.daily[7].temp.max.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast7_min).Text = "Min: " + i.daily[7].temp.min.ToString() + "°C";
+                FindViewById<TextView>(Resource.Id.forecast7_pop).Text = i.daily[7].pop.ToString() + "%";
+                // Chart
+                SfChart chart = FindViewById<SfChart>(Resource.Id.sfChart1);
+                //Initializing Primary Axis
+                CategoryAxis primaryAxis = new CategoryAxis();
+                chart.PrimaryAxis = primaryAxis;
+                //Initializing Secondary Axis
+                NumericalAxis secondaryAxis = new NumericalAxis();
+                chart.SecondaryAxis = secondaryAxis;
+                ObservableCollection<ChartData> charts = new ObservableCollection<ChartData>();
+                charts.Add(new ChartData("Jan", 42, 27));
+                charts.Add(new ChartData("Feb", 44, 28));
+                charts.Add(new ChartData("Mar", 53, 35));
+                charts.Add(new ChartData("Apr", 64, 44));
+                charts.Add(new ChartData("May", 75, 54));
+                AreaSeries areaSeries = (new AreaSeries()
+                {
+                    ItemsSource = charts,
+                    XBindingPath = "Date",
+                    YBindingPath = "Temperature"
+                });
+                chart.Series.Add(areaSeries);
+                // Finished All Tasks --> Remove Loading Bar
+                sfLinearProgressBar.Visibility = ViewStates.Gone;
             }
             catch (Exception except)
             {
@@ -224,7 +313,7 @@ namespace Weather.Xamarin
                         { "private", "1" },
                         { "lang", "java" }
                     };
-
+                    // Send Error to Nopaste
                     FormUrlEncodedContent content = new FormUrlEncodedContent(values);
                     HttpResponseMessage response_error = await client.PostAsync("https://nopaste.chaoz-irc.net/api/create", content);
                     string response_error_String = await response_error.Content.ReadAsStringAsync();
@@ -251,7 +340,30 @@ namespace Weather.Xamarin
             }
         }
     }
+    // Chart Data
+    public class ChartData
 
+    {
+
+        public ChartData(string date, double temperature, double rain)
+        {
+
+            this.Date = date;
+
+            this.Temperature = temperature;
+
+            this.Rain = rain;
+
+        }
+
+        public string Date { get; set; }
+
+        public double Temperature { get; set; }
+
+        public double Rain { get; set; }
+
+    }
+    // Deserialization
     public class Weather
     {
         public int id { get; set; }
@@ -379,7 +491,7 @@ namespace Weather.Xamarin
         public string description { get; set; }
     }
 
-    public class Root
+    public class OneClickApi
     {
         public double lat { get; set; }
         public double lon { get; set; }
@@ -391,6 +503,39 @@ namespace Weather.Xamarin
         public List<Daily> daily { get; set; }
         public List<Alert> alerts { get; set; }
     }
+    public partial class ReverseGeocoding
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
 
+        [JsonProperty("local_names")]
+        public LocalNames LocalNames { get; set; }
 
+        [JsonProperty("lat")]
+        public double Lat { get; set; }
+
+        [JsonProperty("lon")]
+        public double Lon { get; set; }
+
+        [JsonProperty("country")]
+        public string Country { get; set; }
+    }
+
+    public partial class LocalNames
+    {
+        [JsonProperty("ascii")]
+        public string Ascii { get; set; }
+
+        [JsonProperty("de")]
+        public string De { get; set; }
+
+        [JsonProperty("feature_name")]
+        public string FeatureName { get; set; }
+
+        [JsonProperty("ru")]
+        public string Ru { get; set; }
+
+        [JsonProperty("sr")]
+        public string Sr { get; set; }
+    }
 }
