@@ -18,12 +18,38 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:id="@+id/relativeLayout1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:fillViewport="true"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="visible"
+            android:background="@android:color/holo_red_dark"
+            android:id="@+id/nonetwork_layout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/main_warning"
+                android:textAlignment="center"
+                android:paddingTop="15px"
+                android:paddingBottom="15px"
+                android:id="@+id/nonetwork_txt"
+                android:text="NO INTERNET CONNECTION"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RETRY"
+                android:id="@+id/nointernet_retry"
+                android:background="@android:color/holo_red_dark"/>
+        </LinearLayout>
         <TextView
             android:text="@string/placeholder"
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="75px"
+            android:layout_below="@id/nonetwork_layout"
             android:id="@+id/city_txt" />
         <TextView
             android:text="@string/placeholder"
@@ -556,13 +582,14 @@
             </LinearLayout>
         </HorizontalScrollView>
         <LinearLayout
+            android:layout_marginTop="30px"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_below="@id/scrollview_forcecast">
             <Com.Syncfusion.Charts.SfChart
                 android:layout_width="wrap_content"
                 android:minWidth="500px"
-                android:layout_height="1000px"
+                android:layout_height="750px"
                 android:id="@+id/sfChart1"
                 android:layout_below="@id/scrollview_forcecast"/>
         </LinearLayout>

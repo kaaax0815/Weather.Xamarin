@@ -7,11 +7,11 @@ using Android.App;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Weather.Xamarin")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("C# Weather App written in Xamarin.Android")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("kaaaxcreators")]
 [assembly: AssemblyProduct("Weather.Xamarin")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("GPL-3.0")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
@@ -20,7 +20,7 @@ using Android.App;
 //
 //      Major Version
 //      Minor Version 
-//      Build Number
-//      Revision
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+//      Build Number empty
+//      Revision empty
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]

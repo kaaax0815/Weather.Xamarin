@@ -21,6 +21,8 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using AlertDialog = Android.App.AlertDialog;
 using System.Collections.ObjectModel;
+using Android.Net;
+using Android.Util;
 
 namespace Weather.Xamarin
 {
@@ -40,6 +42,12 @@ namespace Weather.Xamarin
             SetSupportActionBar(toolbar);
             // SfPullToRefresh pullToRefresh = FindViewById<SfPullToRefresh>(Resource.Id.sfPullToRefresh1);
             // pullToRefresh.Refreshing += PullToRefresh_Refreshing;
+            FindViewById<Button>(Resource.Id.nointernet_retry).Click += Retry_Click;
+            GetWeather();
+        }
+
+        private void Retry_Click(object sender, EventArgs e)
+        {
             GetWeather();
         }
 
@@ -71,6 +79,12 @@ namespace Weather.Xamarin
             e.Refreshed = true;
         }
 
+        public bool IsOnline()
+        {
+            var cm = (ConnectivityManager)GetSystemService(ConnectivityService);
+            return cm.ActiveNetworkInfo == null ? false : cm.ActiveNetworkInfo.IsConnected;
+        }
+
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
@@ -80,6 +94,17 @@ namespace Weather.Xamarin
         }
         public async void GetWeather()
         {
+            if (!IsOnline())
+            {
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                LinearLayout nonetwork = FindViewById<LinearLayout>(Resource.Id.nonetwork_layout);
+                nonetwork.Visibility = ViewStates.Visible;
+                return;
+            }
+            else
+            {
+                FindViewById<LinearLayout>(Resource.Id.nonetwork_layout).Visibility = ViewStates.Gone;
+            }
             // Progress Bar
             RelativeLayout relativeLayout = FindViewById<RelativeLayout>(Resource.Id.relativeLayout1);
             SfLinearProgressBar sfLinearProgressBar = new SfLinearProgressBar(this)
@@ -286,19 +311,76 @@ namespace Weather.Xamarin
                 //Initializing Secondary Axis
                 NumericalAxis secondaryAxis = new NumericalAxis();
                 chart.SecondaryAxis = secondaryAxis;
-                ObservableCollection<ChartData> charts = new ObservableCollection<ChartData>();
-                charts.Add(new ChartData("Jan", 42, 27));
-                charts.Add(new ChartData("Feb", 44, 28));
-                charts.Add(new ChartData("Mar", 53, 35));
-                charts.Add(new ChartData("Apr", 64, 44));
-                charts.Add(new ChartData("May", 75, 54));
-                AreaSeries areaSeries = (new AreaSeries()
+                // Populate Temp Series
+                ObservableCollection<TempChart> tempchart = new ObservableCollection<TempChart>
                 {
-                    ItemsSource = charts,
+                    new TempChart(dtDateTime.AddSeconds(i.daily[0].dt).ToLocalTime().ToString("d"), i.daily[0].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[0].dt).ToLocalTime().ToString("d"), i.daily[0].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[0].dt).ToLocalTime().ToString("d"), i.daily[0].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[0].dt).ToLocalTime().ToString("d"), i.daily[0].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d"), i.daily[1].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d"), i.daily[1].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d"), i.daily[1].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d"), i.daily[1].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d"), i.daily[2].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d"), i.daily[2].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d"), i.daily[2].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d"), i.daily[2].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d"), i.daily[3].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d"), i.daily[3].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d"), i.daily[3].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d"), i.daily[3].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d"), i.daily[4].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d"), i.daily[4].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d"), i.daily[4].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d"), i.daily[4].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d"), i.daily[5].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d"), i.daily[5].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d"), i.daily[5].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d"), i.daily[5].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d"), i.daily[6].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d"), i.daily[6].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d"), i.daily[6].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d"), i.daily[6].temp.night),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d"), i.daily[7].temp.morn),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d"), i.daily[7].temp.day),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d"), i.daily[7].temp.eve),
+                    new TempChart(dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d"), i.daily[7].temp.night)
+                };
+                AreaSeries tempseries = (new AreaSeries()
+                {
+                    ItemsSource = tempchart,
                     XBindingPath = "Date",
                     YBindingPath = "Temperature"
                 });
-                chart.Series.Add(areaSeries);
+                tempseries.TooltipEnabled = true;
+                tempseries.Label = "Temp in °C";
+                tempseries.VisibilityOnLegend = Visibility.Visible;
+                tempseries.Color = Android.Graphics.Color.Red;
+                chart.Series.Add(tempseries);
+                ObservableCollection<RainChart> rainchart = new ObservableCollection<RainChart>
+                {
+                    new RainChart(dtDateTime.AddSeconds(i.daily[0].dt).ToLocalTime().ToString("d"), i.daily[0].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d"), i.daily[1].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d"), i.daily[2].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d"), i.daily[3].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d"), i.daily[4].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d"), i.daily[5].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d"), i.daily[6].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d"), i.daily[7].rain)
+                };
+                AreaSeries rainseries = (new AreaSeries()
+                {
+                    ItemsSource = rainchart,
+                    XBindingPath = "Date",
+                    YBindingPath = "Rain"
+                });
+                rainseries.TooltipEnabled = true;
+                rainseries.Label = "Rain in mm";
+                rainseries.VisibilityOnLegend = Visibility.Visible;
+                rainseries.Color = Android.Graphics.Color.Blue;
+                chart.Legend.Visibility = Visibility.Visible;
+                chart.Series.Add(rainseries);
                 // Finished All Tasks --> Remove Loading Bar
                 sfLinearProgressBar.Visibility = ViewStates.Gone;
             }
@@ -341,24 +423,38 @@ namespace Weather.Xamarin
         }
     }
     // Chart Data
-    public class ChartData
+    public class TempChart
 
     {
 
-        public ChartData(string date, double temperature, double rain)
+        public TempChart(string date, double temperature)
         {
 
             this.Date = date;
 
             this.Temperature = temperature;
 
-            this.Rain = rain;
-
         }
 
         public string Date { get; set; }
 
         public double Temperature { get; set; }
+
+    }
+    public class RainChart
+
+    {
+
+        public RainChart(string date, double rain)
+        {
+
+            this.Date = date;
+
+            this.Rain = rain;
+
+        }
+
+        public string Date { get; set; }
 
         public double Rain { get; set; }
 
