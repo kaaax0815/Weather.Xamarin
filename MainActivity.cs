@@ -1,18 +1,21 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Net;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Com.Syncfusion.Charts;
 using Newtonsoft.Json;
 using Plugin.Geolocator;
 using Square.Picasso;
 using Syncfusion.Android.ProgressBar;
 using Syncfusion.SfPullToRefresh;
-using Com.Syncfusion.Charts;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -20,9 +23,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using AlertDialog = Android.App.AlertDialog;
-using System.Collections.ObjectModel;
-using Android.Net;
-using Android.Util;
 
 namespace Weather.Xamarin
 {
@@ -82,8 +82,8 @@ namespace Weather.Xamarin
 
         public bool IsOnline()
         {
-            var cm = (ConnectivityManager)GetSystemService(ConnectivityService);
-            return cm.ActiveNetworkInfo == null ? false : cm.ActiveNetworkInfo.IsConnected;
+            ConnectivityManager cm = (ConnectivityManager)GetSystemService(ConnectivityService);
+            return cm.ActiveNetworkInfo != null && cm.ActiveNetworkInfo.IsConnected;
         }
 
 
@@ -121,9 +121,9 @@ namespace Weather.Xamarin
             try
             {
                 // Get Current Location
-                var locator = CrossGeolocator.Current;
+                Plugin.Geolocator.Abstractions.IGeolocator locator = CrossGeolocator.Current;
                 locator.DesiredAccuracy = 50;
-                var loc = await locator.GetPositionAsync();
+                Plugin.Geolocator.Abstractions.Position loc = await locator.GetPositionAsync();
 
 
                 if (loc != null)
@@ -210,8 +210,8 @@ namespace Weather.Xamarin
                 if (iqresponse.StatusCode != HttpStatusCode.OK)
                     Toast.MakeText(Application.Context, GetString(Resource.String.status_error) + iqresponse.StatusCode, ToastLength.Short).Show();
                 using StreamReader iqreader = new StreamReader(iqresponse.GetResponseStream());
-                var iqcontent = iqreader.ReadToEnd();
-                var loc = JsonConvert.DeserializeObject<ReverseGeocoding>(iqcontent);
+                string iqcontent = iqreader.ReadToEnd();
+                ReverseGeocoding loc = JsonConvert.DeserializeObject<ReverseGeocoding>(iqcontent);
                 // Weather Data
                 WebRequest request = HttpWebRequest.Create("https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&lang=" + lang + "&appid=" + key + "&units=metric");
                 request.ContentType = "application/json";
@@ -220,8 +220,8 @@ namespace Weather.Xamarin
                 if (response.StatusCode != HttpStatusCode.OK)
                     Toast.MakeText(Application.Context, GetString(Resource.String.status_error) + response.StatusCode, ToastLength.Short).Show();
                 using StreamReader reader = new StreamReader(response.GetResponseStream());
-                var content = reader.ReadToEnd();
-                var i = JsonConvert.DeserializeObject<OneClickApi>(content);
+                string content = reader.ReadToEnd();
+                OneClickApi i = JsonConvert.DeserializeObject<OneClickApi>(content);
                 // Current Weather
                 if (loc.address.city != null)
                     FindViewById<TextView>(Resource.Id.city_txt).Text = loc.address.city;
@@ -256,43 +256,43 @@ namespace Weather.Xamarin
                 Picasso.Get().Load(forecast1_url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast1_img));
                 FindViewById<TextView>(Resource.Id.forecast1_max).Text = GetString(Resource.String.max) + i.daily[1].temp.max.ToString() + "°C";
                 FindViewById<TextView>(Resource.Id.forecast1_min).Text = GetString(Resource.String.min) + i.daily[1].temp.min.ToString() + "°C";
-                FindViewById<TextView>(Resource.Id.forecast1_pop).Text = i.daily[1].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast1_pop).Text = i.daily[1].pop.ToString("P0");
                 FindViewById<TextView>(Resource.Id.forecast2_date).Text = dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d");
                 string forecast2_url = "https://openweathermap.org/img/wn/" + i.daily[2].weather[0].icon + "@4x.png";
                 Picasso.Get().Load(forecast2_url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast2_img));
                 FindViewById<TextView>(Resource.Id.forecast2_max).Text = GetString(Resource.String.max) + i.daily[2].temp.max.ToString() + "°C";
                 FindViewById<TextView>(Resource.Id.forecast2_min).Text = GetString(Resource.String.min) + i.daily[2].temp.min.ToString() + "°C";
-                FindViewById<TextView>(Resource.Id.forecast2_pop).Text = i.daily[2].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast2_pop).Text = i.daily[2].pop.ToString("P0");
                 FindViewById<TextView>(Resource.Id.forecast3_date).Text = dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d");
                 string forecast3_url = "https://openweathermap.org/img/wn/" + i.daily[3].weather[0].icon + "@4x.png";
                 Picasso.Get().Load(forecast3_url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast3_img));
                 FindViewById<TextView>(Resource.Id.forecast3_max).Text = GetString(Resource.String.max) + i.daily[3].temp.max.ToString() + "°C";
                 FindViewById<TextView>(Resource.Id.forecast3_min).Text = GetString(Resource.String.min) + i.daily[3].temp.min.ToString() + "°C";
-                FindViewById<TextView>(Resource.Id.forecast3_pop).Text = i.daily[3].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast3_pop).Text = i.daily[3].pop.ToString("P0");
                 FindViewById<TextView>(Resource.Id.forecast4_date).Text = dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d");
                 string forecast4_url = "https://openweathermap.org/img/wn/" + i.daily[4].weather[0].icon + "@4x.png";
                 Picasso.Get().Load(forecast4_url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast4_img));
                 FindViewById<TextView>(Resource.Id.forecast4_max).Text = GetString(Resource.String.max) + i.daily[4].temp.max.ToString() + "°C";
                 FindViewById<TextView>(Resource.Id.forecast4_min).Text = GetString(Resource.String.min) + i.daily[4].temp.min.ToString() + "°C";
-                FindViewById<TextView>(Resource.Id.forecast4_pop).Text = i.daily[4].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast4_pop).Text = i.daily[4].pop.ToString("P0");
                 FindViewById<TextView>(Resource.Id.forecast5_date).Text = dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d");
                 string forecast5_url = "https://openweathermap.org/img/wn/" + i.daily[5].weather[0].icon + "@4x.png";
                 Picasso.Get().Load(forecast5_url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast5_img));
                 FindViewById<TextView>(Resource.Id.forecast5_max).Text = GetString(Resource.String.max) + i.daily[5].temp.max.ToString() + "°C";
                 FindViewById<TextView>(Resource.Id.forecast5_min).Text = GetString(Resource.String.min) + i.daily[5].temp.min.ToString() + "°C";
-                FindViewById<TextView>(Resource.Id.forecast5_pop).Text = i.daily[5].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast5_pop).Text = i.daily[5].pop.ToString("P0");
                 FindViewById<TextView>(Resource.Id.forecast6_date).Text = dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d");
                 string forecast6_url = "https://openweathermap.org/img/wn/" + i.daily[6].weather[0].icon + "@4x.png";
                 Picasso.Get().Load(forecast6_url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast6_img));
                 FindViewById<TextView>(Resource.Id.forecast6_max).Text = GetString(Resource.String.max) + i.daily[6].temp.max.ToString() + "°C";
                 FindViewById<TextView>(Resource.Id.forecast6_min).Text = GetString(Resource.String.min) + i.daily[6].temp.min.ToString() + "°C";
-                FindViewById<TextView>(Resource.Id.forecast6_pop).Text = i.daily[6].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast6_pop).Text = i.daily[6].pop.ToString("P0");
                 FindViewById<TextView>(Resource.Id.forecast7_date).Text = dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d");
                 string forecast7_url = "https://openweathermap.org/img/wn/" + i.daily[7].weather[0].icon + "@4x.png";
                 Picasso.Get().Load(forecast7_url).Fit().CenterCrop().Into(FindViewById<ImageView>(Resource.Id.forecast7_img));
                 FindViewById<TextView>(Resource.Id.forecast7_max).Text = GetString(Resource.String.max) + i.daily[7].temp.max.ToString() + "°C";
                 FindViewById<TextView>(Resource.Id.forecast7_min).Text = GetString(Resource.String.min) + i.daily[7].temp.min.ToString() + "°C";
-                FindViewById<TextView>(Resource.Id.forecast7_pop).Text = i.daily[7].pop.ToString() + "%";
+                FindViewById<TextView>(Resource.Id.forecast7_pop).Text = i.daily[7].pop.ToString("P0");
                 // Chart
                 SfChart chart = FindViewById<SfChart>(Resource.Id.sfChart1);
                 //Initializing Primary Axis
