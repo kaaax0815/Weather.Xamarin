@@ -35,11 +35,11 @@
                 android:paddingTop="15px"
                 android:paddingBottom="15px"
                 android:id="@+id/nonetwork_txt"
-                android:text="NO INTERNET CONNECTION"/>
+                android:text="@string/nointernet"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="RETRY"
+                android:text="@string/retry"
                 android:id="@+id/nointernet_retry"
                 android:background="@android:color/holo_red_dark"/>
         </LinearLayout>

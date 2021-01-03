@@ -1,0 +1,31 @@
+<resources>
+  <string name="app_name">Weather.Xamarin</string>
+  <string name="navigation_drawer_open">Navigationsschublade öffnen</string>
+  <string name="navigation_drawer_close">Navigationsschublade schließen</string>
+  <string name="action_settings">Einstellungen</string>
+  <string name="action_refresh">Neu laden / aktualisieren</string>
+  <string name="logo">Logo</string>
+  <string name="author">Bernd Storath (kaaaxcreators)</string>
+  <string name="website">https:&#47;&#47;kaaaxcreators.de</string>
+  <string name="placeholder">Platzhalter</string>
+  <string name="icon">Symbol</string>
+  <string name="rain">mm Regen in der letzten&#160;</string>
+  <string name="snow">mm Schnee in der letzten&#160;</string>
+  <string name="nointernet">KEINE INTERNETVERBINDUNG</string>
+  <string name="retry">ERNEUT VERSUCHEN</string>
+  <string name="location_error">Fehler beim Abrufen des Standorts</string>
+  <string name="featurenotenabled">Beim Abrufen Ihres Standorts ist ein Fehler aufgetreten. Bitte aktivieren Sie die Ortungsdienste!</string>
+  <string name="ok">OK</string>
+  <string name="location_error_text">Beim Abrufen Ihres Standorts ist ein Fehler aufgetreten. Bitte erneut versuchen</string>
+  <string name="location_error_dev">Beim Abrufen Ihres Standorts ist ein Fehler aufgetreten. Bitte teilen Sie diese URL mit Entwicklern:</string>
+  <string name="fetching_error">Fehler beim Erstellen eines Fehlers und beim Hochladen des Protokolls:&#160;</string>
+  <string name="status_error">Fehler beim Abrufen der Daten. Der Server hat den Statuscode zurückgegeben::&#160;</string>
+  <string name="feelslike">Fühlt sich an wie:&#160;</string>
+  <string name="max">Max:&#160;</string>
+  <string name="min">Min:&#160;</string>
+  <string name="log_error">Fehler beim Anzeigen des Fehlers und beim Hochladen des Protokolls:&#160;</string>
+  <string name="tempchart">Temp in °C</string>
+  <string name="rainchart">Regen und Schnee in mm</string>
+  <string name="requesterror">Fehler beim Anzeigen des Fehlers und beim Hochladen des Protokolls</string>
+  <string name="requesterror_dev">Fehler beim Anfordern und Einstellen der Werte. Bitte teilen Sie diese URL mit Entwicklern:</string>
+</resources>
