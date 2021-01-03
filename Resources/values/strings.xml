@@ -25,7 +25,8 @@
   <string name="min">Min:&#160;</string>
   <string name="log_error">Error while showing Error and uploading Log:&#160;</string>
   <string name="tempchart">Temp in °C</string>
-  <string name="rainchart">Rain and Snow in mm</string>
+  <string name="rainchart">Rain in mm</string>
+  <string name="snowchart">Snow in mm</string>
   <string name="requesterror">Error while making Request and setting Values</string>
   <string name="requesterror_dev">Error while making Request and setting Values. Please share this url with Developers:</string>
 </resources>

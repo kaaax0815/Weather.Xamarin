@@ -240,17 +240,15 @@ namespace Weather.Xamarin
                 FindViewById<TextView>(Resource.Id.pressure_txt).Text = i.current.pressure + "hPa";
                 FindViewById<TextView>(Resource.Id.speed_txt).Text = i.current.wind_speed + "m/s";
                 FindViewById<TextView>(Resource.Id.direction_txt).Text = i.current.wind_deg + "°";
-                if (i.current.rain != null && i.current.rain._1h != 0.0)
+                if (i.current.rain != null && i.current.rain._1h > 0.01)
                 {
                     FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
                     FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.rain._1h + GetString(Resource.String.rain) + "1h";
-
                 }
-                else if (i.current.snow != null && i.current.snow._1h != 0.0)
+                else if (i.current.snow != null && i.current.snow._1h > 0.01)
                 {
                     FindViewById<RelativeLayout>(Resource.Id.rain_layout).Visibility = ViewStates.Visible;
                     FindViewById<TextView>(Resource.Id.rain_txt).Text = " " + i.current.snow._1h + GetString(Resource.String.snow) + "1h";
-
                 }
                 // Forecast
                 FindViewById<TextView>(Resource.Id.forecast1_date).Text = dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d");
@@ -352,14 +350,14 @@ namespace Weather.Xamarin
                 chart.Series.Add(tempseries);
                 ObservableCollection<RainChart> rainchart = new ObservableCollection<RainChart>
                 {
-                    new RainChart(dtDateTime.AddSeconds(i.daily[0].dt).ToLocalTime().ToString("d"), i.daily[0].rain + i.daily[0].snow),
-                    new RainChart(dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d"), i.daily[1].rain + i.daily[1].snow),
-                    new RainChart(dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d"), i.daily[2].rain + i.daily[2].snow),
-                    new RainChart(dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d"), i.daily[3].rain + i.daily[3].snow),
-                    new RainChart(dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d"), i.daily[4].rain + i.daily[4].snow),
-                    new RainChart(dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d"), i.daily[5].rain + i.daily[5].snow),
-                    new RainChart(dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d"), i.daily[6].rain + i.daily[6].snow),
-                    new RainChart(dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d"), i.daily[7].rain + i.daily[7].snow)
+                    new RainChart(dtDateTime.AddSeconds(i.daily[0].dt).ToLocalTime().ToString("d"), i.daily[0].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d"), i.daily[1].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d"), i.daily[2].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d"), i.daily[3].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d"), i.daily[4].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d"), i.daily[5].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d"), i.daily[6].rain),
+                    new RainChart(dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d"), i.daily[7].rain)
                 };
                 AreaSeries rainseries = (new AreaSeries()
                 {
@@ -371,8 +369,33 @@ namespace Weather.Xamarin
                 rainseries.Label = GetString(Resource.String.rainchart);
                 rainseries.VisibilityOnLegend = Visibility.Visible;
                 rainseries.Color = Android.Graphics.Color.Blue;
-                chart.Legend.Visibility = Visibility.Visible;
                 chart.Series.Add(rainseries);
+                if (i.daily[0].snow > 0.001 || i.daily[1].snow > 0.001 || i.daily[2].snow > 0.001 || i.daily[3].snow > 0.001 || i.daily[4].snow > 0.001 || i.daily[5].snow > 0.001 || i.daily[6].snow > 0.001 || i.daily[7].snow > 0.001)
+                {
+                    ObservableCollection<SnowChart> snowchart = new ObservableCollection<SnowChart>
+                    {
+                        new SnowChart(dtDateTime.AddSeconds(i.daily[0].dt).ToLocalTime().ToString("d"), i.daily[0].snow),
+                        new SnowChart(dtDateTime.AddSeconds(i.daily[1].dt).ToLocalTime().ToString("d"), i.daily[1].snow),
+                        new SnowChart(dtDateTime.AddSeconds(i.daily[2].dt).ToLocalTime().ToString("d"), i.daily[2].snow),
+                        new SnowChart(dtDateTime.AddSeconds(i.daily[3].dt).ToLocalTime().ToString("d"), i.daily[3].snow),
+                        new SnowChart(dtDateTime.AddSeconds(i.daily[4].dt).ToLocalTime().ToString("d"), i.daily[4].snow),
+                        new SnowChart(dtDateTime.AddSeconds(i.daily[5].dt).ToLocalTime().ToString("d"), i.daily[5].snow),
+                        new SnowChart(dtDateTime.AddSeconds(i.daily[6].dt).ToLocalTime().ToString("d"), i.daily[6].snow),
+                        new SnowChart(dtDateTime.AddSeconds(i.daily[7].dt).ToLocalTime().ToString("d"), i.daily[7].snow)
+                    };
+                    AreaSeries snowseries = (new AreaSeries()
+                    {
+                        ItemsSource = snowchart,
+                        XBindingPath = "Date",
+                        YBindingPath = "Snow"
+                    });
+                    snowseries.TooltipEnabled = true;
+                    snowseries.Label = GetString(Resource.String.snowchart);
+                    snowseries.VisibilityOnLegend = Visibility.Visible;
+                    snowseries.Color = Android.Graphics.Color.LightGray;
+                    chart.Series.Add(snowseries);
+                }
+                chart.Legend.Visibility = Visibility.Visible;
                 // Finished All Tasks --> Remove Loading Bar
                 sfLinearProgressBar.Visibility = ViewStates.Gone;
             }
@@ -451,6 +474,24 @@ namespace Weather.Xamarin
         public double Rain { get; set; }
 
     }
+    public class SnowChart
+
+    {
+
+        public SnowChart(string date, double snow)
+        {
+
+            this.Date = date;
+
+            this.Snow = snow;
+
+        }
+
+        public string Date { get; set; }
+
+        public double Snow { get; set; }
+
+    }
     // Deserialization
     public class Weather
     {
@@ -483,11 +524,13 @@ namespace Weather.Xamarin
 
     public class Snow
     {
+        [JsonProperty("1h")]
         public double _1h { get; set; }
     }
 
     public class Rain
     {
+        [JsonProperty("1h")]
         public double _1h { get; set; }
     }
 

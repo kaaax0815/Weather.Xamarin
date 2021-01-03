@@ -25,7 +25,8 @@
   <string name="min">Min:&#160;</string>
   <string name="log_error">Fehler beim Anzeigen des Fehlers und beim Hochladen des Protokolls:&#160;</string>
   <string name="tempchart">Temp in °C</string>
-  <string name="rainchart">Regen und Schnee in mm</string>
+  <string name="rainchart">Regen in mm</string>
   <string name="requesterror">Fehler beim Anzeigen des Fehlers und beim Hochladen des Protokolls</string>
   <string name="requesterror_dev">Fehler beim Anfordern und Einstellen der Werte. Bitte teilen Sie diese URL mit Entwicklern:</string>
+  <string name="snowchart">Schnee in mm</string>
 </resources>

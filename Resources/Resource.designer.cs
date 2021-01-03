@@ -5641,22 +5641,25 @@ namespace Weather.Xamarin
 			public const int snow = 2131624030;
 			
 			// aapt resource value: 0x7F0E005F
-			public const int status_bar_notification_info_overflow = 2131624031;
+			public const int snowchart = 2131624031;
 			
 			// aapt resource value: 0x7F0E0060
-			public const int status_error = 2131624032;
+			public const int status_bar_notification_info_overflow = 2131624032;
 			
 			// aapt resource value: 0x7F0E0061
-			public const int tempchart = 2131624033;
+			public const int status_error = 2131624033;
 			
 			// aapt resource value: 0x7F0E0062
-			public const int w = 2131624034;
+			public const int tempchart = 2131624034;
 			
 			// aapt resource value: 0x7F0E0063
-			public const int website = 2131624035;
+			public const int w = 2131624035;
 			
 			// aapt resource value: 0x7F0E0064
-			public const int week = 2131624036;
+			public const int website = 2131624036;
+			
+			// aapt resource value: 0x7F0E0065
+			public const int week = 2131624037;
 			
 			static String()
 			{
