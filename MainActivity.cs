@@ -26,7 +26,7 @@ using AlertDialog = Android.App.AlertDialog;
 
 namespace Weather.Xamarin
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar")]
     public class MainActivity : AppCompatActivity
     {
         readonly string key = "89f453dd00317568c5655dddece7f2a7";
@@ -63,6 +63,7 @@ namespace Weather.Xamarin
             int id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
+                StartActivity(typeof(Settings));
                 return true;
             }
             if (id == Resource.Id.action_refresh)
@@ -72,6 +73,25 @@ namespace Weather.Xamarin
             }
 
             return base.OnOptionsItemSelected(item);
+        }
+        public override void OnBackPressed()
+        {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.SetTitle(GetString(Resource.String.exit));
+            alert.SetCancelable(false);
+            alert.SetMessage(GetString(Resource.String.exit_text));
+            alert.SetNegativeButton(GetString(Resource.String.negative), (senderAlert, args) =>
+            {
+                return;
+            });
+            alert.SetPositiveButton(GetString(Resource.String.positive), (senderAlert, args) =>
+            {
+                Finish();
+                return;
+            });
+            Dialog dialog = alert.Create();
+            dialog.Show();
+
         }
         private async void PullToRefresh_Refreshing(object sender, RefreshingEventArgs e)
         {

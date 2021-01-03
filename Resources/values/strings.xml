@@ -29,4 +29,8 @@
   <string name="snowchart">Snow in mm</string>
   <string name="requesterror">Error while making Request and setting Values</string>
   <string name="requesterror_dev">Error while making Request and setting Values. Please share this url with Developers:</string>
+  <string name="positive">Yes</string>
+  <string name="negative">No</string>
+  <string name="exit">Exit</string>
+  <string name="exit_text">"Do you really want to exit?</string>
 </resources>
