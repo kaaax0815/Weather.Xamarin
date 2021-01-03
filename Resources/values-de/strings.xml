@@ -20,7 +20,7 @@
   <string name="location_error_dev">Beim Abrufen Ihres Standorts ist ein Fehler aufgetreten. Bitte teilen Sie diese URL mit Entwicklern:</string>
   <string name="fetching_error">Fehler beim Erstellen eines Fehlers und beim Hochladen des Protokolls:&#160;</string>
   <string name="status_error">Fehler beim Abrufen der Daten. Der Server hat den Statuscode zurückgegeben::&#160;</string>
-  <string name="feelslike">Fühlt sich an wie:&#160;</string>
+  <string name="feelslike">Wie:&#160;</string>
   <string name="max">Max:&#160;</string>
   <string name="min">Min:&#160;</string>
   <string name="log_error">Fehler beim Anzeigen des Fehlers und beim Hochladen des Protokolls:&#160;</string>
