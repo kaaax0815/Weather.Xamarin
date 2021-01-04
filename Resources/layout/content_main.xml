@@ -11,6 +11,7 @@
     android:scrollbars="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:minWidth="25px"
+    android:id="@+id/root"
     android:focusable="true"
     android:minHeight="25px">
     <RelativeLayout
@@ -36,6 +37,13 @@
                 android:paddingBottom="15px"
                 android:id="@+id/nonetwork_txt"
                 android:text="@string/nointernet"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15px"
+                android:textAlignment="center"
+                android:text="@string/lastupdate"
+                android:id="@+id/lastupdatetxt"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -262,7 +270,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/forecast1_kayout"
+                android:id="@+id/forecast1_layout"
                 android:orientation="horizontal"
                 android:paddingLeft="15px"
                 android:paddingRight="15px">
@@ -272,11 +280,11 @@
                     android:layout_marginLeft="15px"
                     android:orientation="vertical">
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder"
-                    android:id="@+id/forecast1_date"/>
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/placeholder"
+                        android:id="@+id/forecast1_date"/>
                     <ImageView
                         android:src="@android:drawable/ic_menu_gallery"
                         android:contentDescription="@string/icon"
@@ -317,11 +325,11 @@
                     android:layout_marginLeft="15px"
                     android:orientation="vertical">
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder"
-                    android:id="@+id/forecast2_date"/>
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/placeholder"
+                        android:id="@+id/forecast2_date"/>
                     <ImageView
                         android:src="@android:drawable/ic_menu_gallery"
                         android:contentDescription="@string/icon"
@@ -362,11 +370,11 @@
                     android:layout_marginLeft="15px"
                     android:orientation="vertical">
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder"
-                    android:id="@+id/forecast3_date"/>
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/placeholder"
+                        android:id="@+id/forecast3_date"/>
                     <ImageView
                         android:src="@android:drawable/ic_menu_gallery"
                         android:contentDescription="@string/icon"
@@ -407,11 +415,11 @@
                     android:layout_marginLeft="15px"
                     android:orientation="vertical">
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder"
-                    android:id="@+id/forecast4_date"/>
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/placeholder"
+                        android:id="@+id/forecast4_date"/>
                     <ImageView
                         android:src="@android:drawable/ic_menu_gallery"
                         android:contentDescription="@string/icon"
@@ -452,11 +460,11 @@
                     android:layout_marginLeft="15px"
                     android:orientation="vertical">
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder"
-                    android:id="@+id/forecast5_date"/>
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/placeholder"
+                        android:id="@+id/forecast5_date"/>
                     <ImageView
                         android:src="@android:drawable/ic_menu_gallery"
                         android:contentDescription="@string/icon"
@@ -497,11 +505,11 @@
                     android:layout_marginLeft="15px"
                     android:orientation="vertical">
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder"
-                    android:id="@+id/forecast6_date"/>
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/placeholder"
+                        android:id="@+id/forecast6_date"/>
                     <ImageView
                         android:src="@android:drawable/ic_menu_gallery"
                         android:contentDescription="@string/icon"
@@ -542,11 +550,11 @@
                     android:layout_marginLeft="15px"
                     android:orientation="vertical">
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder"
-                    android:id="@+id/forecast7_date"/>
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="@string/placeholder"
+                        android:id="@+id/forecast7_date"/>
                     <ImageView
                         android:src="@android:drawable/ic_menu_gallery"
                         android:contentDescription="@string/icon"
@@ -583,11 +591,83 @@
                 </LinearLayout>
             </LinearLayout>
         </HorizontalScrollView>
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal"
+            android:scrollbarAlwaysDrawHorizontalTrack="false"
+            android:layout_marginTop="30px"
+            android:layout_below="@id/scrollview_forcecast"
+            android:id="@+id/scrollview_info">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="15px"
+                android:paddingRight="15px">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_info_1">
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/placeholder"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/placeholder"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_info_2">
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/placeholder"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/placeholder"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_info_3">
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/placeholder"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/placeholder"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_info_4">
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/placeholder"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/placeholder"/>
+                </LinearLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
         <LinearLayout
             android:layout_marginTop="30px"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_below="@id/scrollview_forcecast">
+            android:layout_below="@id/scrollview_info">
             <Com.Syncfusion.Charts.SfChart
                 android:layout_width="wrap_content"
                 android:minWidth="500px"
@@ -595,15 +675,5 @@
                 android:id="@+id/sfChart1"
                 android:layout_below="@id/scrollview_forcecast"/>
         </LinearLayout>
-        <!-- Doesnt work with ScrollView
-        <Syncfusion.SfPullToRefresh.SfPullToRefresh 
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/sfPullToRefresh1"
-        custom:transitionType="push"
-	    custom:progressStrokeColor="@android:color/black"
-        custom:progressBackgroundColor="#ffffff"/>-->
     </RelativeLayout>
 </ScrollView>

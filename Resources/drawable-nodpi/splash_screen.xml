@@ -9,4 +9,12 @@
         android:tileMode="disabled"
         android:gravity="center"/>
   </item>
+  <item
+    android:bottom="20dp"
+    android:left="20dp"
+    android:right="20dp">
+    <bitmap
+        android:gravity="bottom"
+        android:src="@drawable/credits"/>
+  </item>
 </layer-list>

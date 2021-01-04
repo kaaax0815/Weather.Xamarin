@@ -32,5 +32,9 @@
   <string name="positive">Yes</string>
   <string name="negative">No</string>
   <string name="exit">Exit</string>
-  <string name="exit_text">"Do you really want to exit?</string>
+  <string name="exit_text">Do you really want to exit?</string>
+  <string name="lastupdate">Last Update:</string>
+  <string name="notbynow">Not by now</string>
+  <string name="badkey">Wrong API Key</string>
+  <string name="action_search">Search</string>
 </resources>
