@@ -5,7 +5,6 @@ using Android.Graphics;
 using Android.OS;
 using Android.Widget;
 using Newtonsoft.Json;
-using System;
 using System.Net;
 using Xamarin.Essentials;
 
@@ -55,9 +54,9 @@ namespace Weather.Xamarin
 			{
 				OneClickApi i = JsonConvert.DeserializeObject<OneClickApi>(Preferences.Get("offline_weather", ""));
 				
-				updateViews.SetTextViewText(Resource.Id.widgettemperatur, GetString(Resource.String.temp) + i.current.temp.ToString());
-				updateViews.SetTextViewText(Resource.Id.widgetfeelslike, GetString(Resource.String.feelslike) + i.current.feels_like.ToString());
-				updateViews.SetTextViewText(Resource.Id.widgetlastupdate, GetString(Resource.String.lastupdate) + DateTime.Now.ToString("t"));
+				updateViews.SetTextViewText(Resource.Id.widgettemperatur, GetString(Resource.String.temp) + i.current.temp.ToString() + "°C");
+				updateViews.SetTextViewText(Resource.Id.widgetfeelslike, GetString(Resource.String.feelslike) + i.current.feels_like.ToString() + "°C");
+				updateViews.SetTextViewText(Resource.Id.widgetlastupdate, GetString(Resource.String.lastupdate) + Preferences.Get("offline_time", "Error"));
                 string url = "https://openweathermap.org/img/wn/" + i.current.weather[0].icon + "@4x.png";
                 Bitmap imageBitmap = GetImageBitmapFromUrl(url);
 				updateViews.SetImageViewBitmap(Resource.Id.widgetimage, imageBitmap);
@@ -67,6 +66,7 @@ namespace Weather.Xamarin
             {
 				updateViews.SetTextViewText(Resource.Id.widgettemperatur, "Error");
 				updateViews.SetTextViewText(Resource.Id.widgetfeelslike, "Error");
+				updateViews.SetTextViewText(Resource.Id.widgetlastupdate, "Error");
 			}
 			if (true)
 			{

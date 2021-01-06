@@ -44,4 +44,6 @@
   <string name="Night">Night</string>
   <string name="alerts">Alerts</string>
   <string name="noalerts">No Alerts for your current Location</string>
+  <string name="plzcity">Postcode &#38; City</string>
+  <string name="plzcityhint">85001 Phoenix</string>
 </resources>

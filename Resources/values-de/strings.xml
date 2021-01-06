@@ -42,4 +42,8 @@
   <string name="Day">Mittags</string>
   <string name="Evening">Abends</string>
   <string name="Night">Nachts</string>
+  <string name="alerts">Warnung</string>
+  <string name="noalerts">Keine Benachrichtigungen für Ihren aktuellen Standort</string>
+  <string name="plzcity">PLZ &#38; Ort</string>
+  <string name="plzcityhint">97070 Würzburg</string>
 </resources>
