@@ -23,6 +23,7 @@
   <string name="feelslike">Feels like:&#160;</string>
   <string name="max">Max:&#160;</string>
   <string name="min">Min:&#160;</string>
+  <string name="temp">Temp:&#160;</string>
   <string name="log_error">Error while showing Error and uploading Log:&#160;</string>
   <string name="tempchart">Temp in °C</string>
   <string name="rainchart">Rain in mm</string>
@@ -33,8 +34,14 @@
   <string name="negative">No</string>
   <string name="exit">Exit</string>
   <string name="exit_text">Do you really want to exit?</string>
-  <string name="lastupdate">Last Update:</string>
+  <string name="lastupdate">Last Update:&#160;</string>
   <string name="notbynow">Not by now</string>
   <string name="badkey">Wrong API Key</string>
   <string name="action_search">Search</string>
+  <string name="Morning">Morning</string>
+  <string name="Day">Day</string>
+  <string name="Evening">Evening</string>
+  <string name="Night">Night</string>
+  <string name="alerts">Alerts</string>
+  <string name="noalerts">No Alerts for your current Location</string>
 </resources>

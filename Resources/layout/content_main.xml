@@ -275,10 +275,13 @@
                 android:paddingLeft="15px"
                 android:paddingRight="15px">
                 <LinearLayout
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15px"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_1_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
@@ -320,10 +323,13 @@
                         android:drawableLeft="@drawable/main_drop"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15px"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_2_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
@@ -365,10 +371,13 @@
                         android:drawableLeft="@drawable/main_drop"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15px"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_3_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
@@ -410,10 +419,13 @@
                         android:drawableLeft="@drawable/main_drop"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15px"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_4_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
@@ -455,10 +467,13 @@
                         android:drawableLeft="@drawable/main_drop"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15px"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_5_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
@@ -500,10 +515,13 @@
                         android:drawableLeft="@drawable/main_drop"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15px"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_6_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
@@ -545,10 +563,13 @@
                         android:drawableLeft="@drawable/main_drop"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15px"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/forecast_7_layout">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
@@ -591,89 +612,143 @@
                 </LinearLayout>
             </LinearLayout>
         </HorizontalScrollView>
-        <HorizontalScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scrollbars="horizontal"
-            android:scrollbarAlwaysDrawHorizontalTrack="false"
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/forecast_info"
             android:layout_marginTop="30px"
-            android:layout_below="@id/scrollview_forcecast"
-            android:id="@+id/scrollview_info">
+            android:columnCount="4"
+            android:rowCount="1"
+            android:layout_centerHorizontal="true"
+            android:alignmentMode="alignBounds"
+            android:layout_below="@id/scrollview_forcecast">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="15px"
-                android:paddingRight="15px">
-                <LinearLayout
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:textSize="50px"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/forecast_info_1">
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/placeholder"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/placeholder"/>
-                </LinearLayout>
-                <LinearLayout
+                    android:text="@string/Morning"/>
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/forecast_info_2">
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/placeholder"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/placeholder"/>
-                </LinearLayout>
-                <LinearLayout
+                    android:id="@+id/temp_mor"
+                    android:text="@string/placeholder"/>
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/forecast_info_3">
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/placeholder"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/placeholder"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/forecast_info_4">
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/placeholder"/>
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="@string/placeholder"/>
-                </LinearLayout>
+                    android:id="@+id/feels_mor"
+                    android:text="@string/placeholder"/>
             </LinearLayout>
-        </HorizontalScrollView>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:textSize="50px"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Day"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/temp_day"
+                    android:text="@string/placeholder"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/feels_day"
+                    android:text="@string/placeholder"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:textSize="50px"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Evening"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/temp_eve"
+                    android:text="@string/placeholder"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/feels_eve"
+                    android:text="@string/placeholder"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="3"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:textSize="50px"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Night"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/temp_night"
+                    android:text="@string/placeholder"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/feels_night"
+                    android:text="@string/placeholder"/>
+            </LinearLayout>
+        </GridLayout>
         <LinearLayout
             android:layout_marginTop="30px"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_below="@id/scrollview_info">
+            android:id="@+id/chart_layout"
+            android:layout_below="@id/forecast_info">
             <Com.Syncfusion.Charts.SfChart
                 android:layout_width="wrap_content"
                 android:minWidth="500px"
                 android:layout_height="750px"
                 android:id="@+id/sfChart1"
                 android:layout_below="@id/scrollview_forcecast"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="30px"
+            android:id="@+id/alerts_layout"
+            android:layout_below="@id/chart_layout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="50px"
+                android:paddingLeft="15px"
+                android:textColor="@android:color/black"
+                android:drawableLeft="@drawable/main_warning"
+                android:drawablePadding="10px"
+                android:text="@string/alerts"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/alerts"
+                android:text="@string/placeholder"/>
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>
