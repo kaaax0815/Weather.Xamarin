@@ -36,9 +36,9 @@ namespace Weather.Xamarin
 		{
 			Bitmap imageBitmap = null;
 
-			using (var webClient = new WebClient())
+			using (WebClient webClient = new WebClient())
 			{
-				var imageBytes = webClient.DownloadData(url);
+                byte[] imageBytes = webClient.DownloadData(url);
 				if (imageBytes != null && imageBytes.Length > 0)
 				{
 					imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
@@ -58,8 +58,8 @@ namespace Weather.Xamarin
 				updateViews.SetTextViewText(Resource.Id.widgettemperatur, GetString(Resource.String.temp) + i.current.temp.ToString());
 				updateViews.SetTextViewText(Resource.Id.widgetfeelslike, GetString(Resource.String.feelslike) + i.current.feels_like.ToString());
 				updateViews.SetTextViewText(Resource.Id.widgetlastupdate, GetString(Resource.String.lastupdate) + DateTime.Now.ToString("t"));
-				var url = "https://openweathermap.org/img/wn/" + i.current.weather[0].icon + "@4x.png";
-				var imageBitmap = GetImageBitmapFromUrl(url);
+                string url = "https://openweathermap.org/img/wn/" + i.current.weather[0].icon + "@4x.png";
+                Bitmap imageBitmap = GetImageBitmapFromUrl(url);
 				updateViews.SetImageViewBitmap(Resource.Id.widgetimage, imageBitmap);
 
 			}
