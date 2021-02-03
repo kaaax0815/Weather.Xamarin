@@ -5402,22 +5402,19 @@ namespace Weather.Xamarin
 			public const int widgetfeelslike = 2131231077;
 			
 			// aapt resource value: 0x7F080166
-			public const int widgetimage = 2131231078;
+			public const int widgetlastupdate = 2131231078;
 			
 			// aapt resource value: 0x7F080167
-			public const int widgetlastupdate = 2131231079;
+			public const int widgettemperatur = 2131231079;
 			
 			// aapt resource value: 0x7F080168
-			public const int widgettemperatur = 2131231080;
+			public const int withText = 2131231080;
 			
 			// aapt resource value: 0x7F080169
-			public const int withText = 2131231081;
+			public const int wrap_content = 2131231081;
 			
 			// aapt resource value: 0x7F08016A
-			public const int wrap_content = 2131231082;
-			
-			// aapt resource value: 0x7F08016B
-			public const int zoom = 2131231083;
+			public const int zoom = 2131231082;
 			
 			static Id()
 			{
@@ -6041,82 +6038,85 @@ namespace Weather.Xamarin
 			public const int rainchart = 2131624028;
 			
 			// aapt resource value: 0x7F0E005D
-			public const int requesterror = 2131624029;
+			public const int reqloc = 2131624029;
 			
 			// aapt resource value: 0x7F0E005E
-			public const int requesterror_dev = 2131624030;
+			public const int requesterror = 2131624030;
 			
 			// aapt resource value: 0x7F0E005F
-			public const int retry = 2131624031;
+			public const int requesterror_dev = 2131624031;
 			
 			// aapt resource value: 0x7F0E0060
-			public const int search_menu_title = 2131624032;
-			
-			// aapt resource value: 0x7F0E0064
-			public const int sfchart_close_label = 2131624036;
-			
-			// aapt resource value: 0x7F0E0065
-			public const int sfchart_decrease_label = 2131624037;
-			
-			// aapt resource value: 0x7F0E0066
-			public const int sfchart_high_label = 2131624038;
-			
-			// aapt resource value: 0x7F0E0067
-			public const int sfchart_increase_label = 2131624039;
-			
-			// aapt resource value: 0x7F0E0068
-			public const int sfchart_low_label = 2131624040;
-			
-			// aapt resource value: 0x7F0E0069
-			public const int sfchart_maximum_label = 2131624041;
+			public const int retry = 2131624032;
 			
 			// aapt resource value: 0x7F0E0061
-			public const int sfchart_Median_label = 2131624033;
+			public const int search_menu_title = 2131624033;
+			
+			// aapt resource value: 0x7F0E0065
+			public const int sfchart_close_label = 2131624037;
+			
+			// aapt resource value: 0x7F0E0066
+			public const int sfchart_decrease_label = 2131624038;
+			
+			// aapt resource value: 0x7F0E0067
+			public const int sfchart_high_label = 2131624039;
+			
+			// aapt resource value: 0x7F0E0068
+			public const int sfchart_increase_label = 2131624040;
+			
+			// aapt resource value: 0x7F0E0069
+			public const int sfchart_low_label = 2131624041;
 			
 			// aapt resource value: 0x7F0E006A
-			public const int sfchart_minimum_label = 2131624042;
-			
-			// aapt resource value: 0x7F0E006B
-			public const int sfchart_open_label = 2131624043;
-			
-			// aapt resource value: 0x7F0E006C
-			public const int sfchart_others_label = 2131624044;
+			public const int sfchart_maximum_label = 2131624042;
 			
 			// aapt resource value: 0x7F0E0062
-			public const int sfchart_Q1_label = 2131624034;
+			public const int sfchart_Median_label = 2131624034;
 			
-			// aapt resource value: 0x7F0E0063
-			public const int sfchart_Q3_label = 2131624035;
+			// aapt resource value: 0x7F0E006B
+			public const int sfchart_minimum_label = 2131624043;
+			
+			// aapt resource value: 0x7F0E006C
+			public const int sfchart_open_label = 2131624044;
 			
 			// aapt resource value: 0x7F0E006D
-			public const int sfchart_total_label = 2131624045;
+			public const int sfchart_others_label = 2131624045;
+			
+			// aapt resource value: 0x7F0E0063
+			public const int sfchart_Q1_label = 2131624035;
+			
+			// aapt resource value: 0x7F0E0064
+			public const int sfchart_Q3_label = 2131624036;
 			
 			// aapt resource value: 0x7F0E006E
-			public const int snow = 2131624046;
+			public const int sfchart_total_label = 2131624046;
 			
 			// aapt resource value: 0x7F0E006F
-			public const int snowchart = 2131624047;
+			public const int snow = 2131624047;
 			
 			// aapt resource value: 0x7F0E0070
-			public const int status_bar_notification_info_overflow = 2131624048;
+			public const int snowchart = 2131624048;
 			
 			// aapt resource value: 0x7F0E0071
-			public const int status_error = 2131624049;
+			public const int status_bar_notification_info_overflow = 2131624049;
 			
 			// aapt resource value: 0x7F0E0072
-			public const int temp = 2131624050;
+			public const int status_error = 2131624050;
 			
 			// aapt resource value: 0x7F0E0073
-			public const int tempchart = 2131624051;
+			public const int temp = 2131624051;
 			
 			// aapt resource value: 0x7F0E0074
-			public const int w = 2131624052;
+			public const int tempchart = 2131624052;
 			
 			// aapt resource value: 0x7F0E0075
-			public const int website = 2131624053;
+			public const int w = 2131624053;
 			
 			// aapt resource value: 0x7F0E0076
-			public const int week = 2131624054;
+			public const int website = 2131624054;
+			
+			// aapt resource value: 0x7F0E0077
+			public const int week = 2131624055;
 			
 			static String()
 			{

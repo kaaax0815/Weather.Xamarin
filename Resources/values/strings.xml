@@ -46,4 +46,5 @@
   <string name="noalerts">No Alerts for your current Location</string>
   <string name="plzcity">Postcode &#38; City</string>
   <string name="plzcityhint">85001 Phoenix</string>
+  <string name="reqloc">You HAVE to accept Location Permission</string>
 </resources>

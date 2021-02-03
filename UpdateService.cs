@@ -1,11 +1,9 @@
 ﻿using Android.App;
 using Android.Appwidget;
 using Android.Content;
-using Android.Graphics;
 using Android.OS;
 using Android.Widget;
 using Newtonsoft.Json;
-using System.Net;
 using Xamarin.Essentials;
 
 namespace Weather.Xamarin
@@ -31,22 +29,6 @@ namespace Weather.Xamarin
 			return null;
 		}
 
-		private Bitmap GetImageBitmapFromUrl(string url)
-		{
-			Bitmap imageBitmap = null;
-
-			using (WebClient webClient = new WebClient())
-			{
-                byte[] imageBytes = webClient.DownloadData(url);
-				if (imageBytes != null && imageBytes.Length > 0)
-				{
-					imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
-				}
-			}
-
-			return imageBitmap;
-		}
-
 		public RemoteViews BuildUpdate(Context context)
 		{
 			RemoteViews updateViews = new RemoteViews(context.PackageName, Resource.Layout.widget);
@@ -58,8 +40,6 @@ namespace Weather.Xamarin
 				updateViews.SetTextViewText(Resource.Id.widgetfeelslike, GetString(Resource.String.feelslike) + i.current.feels_like.ToString() + "°C");
 				updateViews.SetTextViewText(Resource.Id.widgetlastupdate, GetString(Resource.String.lastupdate) + Preferences.Get("offline_time", "Error"));
                 string url = "https://openweathermap.org/img/wn/" + i.current.weather[0].icon + "@4x.png";
-                Bitmap imageBitmap = GetImageBitmapFromUrl(url);
-				updateViews.SetImageViewBitmap(Resource.Id.widgetimage, imageBitmap);
 
 			}
 			else
@@ -70,8 +50,7 @@ namespace Weather.Xamarin
 			}
 			if (true)
 			{
-				Intent defineIntent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("market://details?id=de.kaaaxcreators.weather_xamarin"));
-
+				Intent defineIntent = new Intent(context, Java.Lang.Class.FromType(typeof(SplashActivity)));
 				PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, defineIntent, 0);
 				updateViews.SetOnClickPendingIntent(Resource.Id.widgetBackground, pendingIntent);
 			}
